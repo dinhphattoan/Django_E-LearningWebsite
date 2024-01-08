@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+  <title>All Courses</title>
+{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+{% endblock %}
+{% block styles %}
+<style>
+  .itemcard {
+    width: 25rem;
+    height: 20rem;
+    margin: 10px;
+    border: 1px solid black;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .itemcard:hover { /* Apply hover styles to all direct children */
+    transform: rotateY(-20deg);
+    box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.25);
+    z-index: 1;
+    
+  }
+  .imgcard{
+    width:24.9rem;
+    height:13rem;
+  }
+  .flex-container{
+    display: flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    overflow:auto;
+    max-height:30rem;
+  }
+  .flex-container-singlerow{
+    display:flex;
+    flex-direction:row;
+    align-items: center;
+    overflow:auto;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h3 class="m-3">Assigned Course:</h3>
+    {% if AssignedCourses is not None %}
+    <div class=" bg-light border border-1 flex-container-singlerow" >
+      {% for course in AssignedCourses  %}
+      <div class="mb-3 itemcard">
+        <a id="itemcard" href="{% url 'coursedetail' courseid=course.documentary.id %}" class="" style="width: 25.5rem;height:20.5rem; text-decoration:none; display: block;">
+          <img class="imgcard" src="{{ course.documentary.thumbnail.url}}" alt="No Image">
+          <div class="overflow-hidden me-2">
+            <h4 class="card-header my-auto bg-bl ms-2 mt-1 overflow-hidden" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{course.documentary.title}}</h4>
+          </div>
+          <br>
+          <div>
+            <div class="d-flex flex-row-reverse p-2 me-2" style="float:right">
+              {% if course.documentary.skill_level == "beginner" %}
+              <span class="ms-1 badge bg-success"><p class="my-auto fs-6">Beginner</p></span>{% endif %}
+              {% if course.documentary.skill_level == "intermediate" %}
+              <span class="ms-1 badge bg-primary"><p class="my-auto fs-6">Intermediate</p></span>{% endif %}
+              {% if course.documentary.skill_level == "advanced" %}
+              <span class="ms-1 badge bg-info"><p class="my-auto fs-6">Advanced</p></span>{% endif %}
+              <b>Skill level:</b>
+            </div>
+          </div>
+          <div class="d-flex p-2 bg-light" style="float:left;">
+            <b class="text-secondary">Hoàn thành:</b>
+            <span class="ms-1 badge bg-primary">
+              {% if course.perfinished is not 100 %}
+              <p class="my-auto fs-7 text-white">{{course.perfinished}}</p>
+              {% else %}
+              <p class="my-auto fs-7 text-primary">&#10004;</p>
+              {% endif %}
+            </span>
+          </div>
+        </a>
+      </div>
+      
+      {% endfor %}
+    </div>
+    {% endif %}
+    <br>
+    <h3 class="m-3">New Course:</h3>
+    <div class="flex-container mt-2 bg-light border border-1 pt-2" >
+      
+      {% for course in Courses  %}
+      <a href="{% url 'coursedetail' courseid=course.id %}" class="" style="width: 25.5rem;height:20.5rem; text-decoration:none;">
+          <div class=" mb-3 itemcard mx-auto my-auto">
+            <img class="imgcard" src="{{ course.thumbnail.url}}" alt="No Image" >
+            <div class=" overflow-hidden">
+              <h4 class="card-header my-auto bg-bl ms-2 mt-1" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;height:2rem;">{{course.title}}</h4>
+            </div>
+            <br>
+            <div class="d-flex flex-row-reverse p-1">
+                
+            </div>
+            <div class="">
+              <div class="d-flex flex-row-reverse p-2 " style="float:right">
+                {% if course.skill_level == "beginner" %}
+                <span class="ms-1 badge bg-success"><p class="my-auto fs-6">Beginner</p></span>{% endif %}
+                {% if course.skill_level == "intermediate" %} 
+                <span class="ms-1 badge bg-primary"><p class="my-auto fs-6">Intermediate</p></span>{% endif %}
+                {% if course.skill_level == "advanced" %} 
+                <span class="ms-1 badge bg-info"><p class="my-auto fs-6">Advanced</p></span>{% endif %}
+              
+              <b>Skill level:</b>
+              </div>
+              <div class="d-flex p-2 bg-light" style="float:left;">
+                
+              </div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+      
+    </div>
+  </div>
+  
+
+{% endblock %}
+{% block javascripts %}
+  <script src="{% static 'js/bootstrap.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+{% endblock %}
+

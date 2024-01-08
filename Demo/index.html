@@ -1,0 +1,211 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bootstrap.css">
+    <title>Document</title>
+  </head>
+  <style>
+        .itemcard {
+            width: 20.1rem;
+            height: 17rem;
+            margin: 10px;
+            border: 1px solid black;
+            transition: all 0.2s ease-in-out;
+          }
+          
+          .itemcard:hover { /* Apply hover styles to all direct children */
+            transform: rotateY(-20deg);
+            box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.25);
+            z-index: 1;
+            
+          }
+          .imgcard{
+            width:24.9rem;
+            height:13rem;
+          }
+          .summary
+          {
+            width: 23rem;
+            height: 7rem;
+          }
+          .flex-container{
+            display: flex;
+            flex-wrap:wrap;
+            justify-content:center;
+            overflow:auto;
+            max-height:30rem;
+          }
+          .flex-container-singlerow{
+            display:flex;
+            flex-direction:row;
+            align-items: center;
+            overflow:auto;
+          }
+        body {
+            background-color: #c8f2f8;
+            justify-content: center;
+            align-items: center;
+          }
+          .subform{
+            border-radius: 15px;
+            background-color: #fff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          }
+          .form {
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            /*animation: fade-in 1s ease-in-out;--!>*/
+          }
+          
+          @keyframes fade-in {
+            from {
+              transform: translateY(-2rem);
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
+          }
+          .imgslide{
+            width:25rem;
+            height:20rem;
+        }
+        </style>
+
+  <body>
+    <div class="text-center mt-3 bg-light border border-1 p-3">
+      <h5>Nắm vững được kiến thức? Thực hiện kiểm tra ngay!</h5>
+      <!-- Button to trigger the modal -->
+      <button type="button" class="btn btn-success btn-md"  data-bs-toggle="modal" data-bs-target="#myModal">Kiểm tra</button>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+
+              <!-- Modal Header -->
+              <div class="modal-header">
+                  <h4 class="modal-title" id="exampleModalLabel">Kiểm tra bài học</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+
+              <!-- Modal Body (Your Layout/Component Goes Here) -->
+              <div class="modal-body px-5" style="">
+                  <!-- Your layout or component content goes here -->
+                  <div class="card my-2">
+                    <div class="card-header">
+                      <p>{{sectionquizz.description}}</p>
+                      <div class="d-flex flex-row ">
+                        <table class="mb-3 table-bordered" >
+                          <thead>
+                                <tr>
+                                  <th scope="col">Thông tin bài kiểm tra</th>
+                                </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="">
+                              <th class="px-1" scope="row">Số câu: </th>
+                              <td class="px-2">{{nquestions}}</td>
+                            </tr>
+                            <tr>
+                              <th class="px-1" scope="row">Điểm mỗi câu: </th>
+                              <td class="px-2">0/{{ nquestions}}</td>
+                            </tr>
+                            <tr>
+                              <th class="px-1" scope="row">Thời gian: </th>
+                              <td class="px-2">15 phút</td>
+                            </tr>
+                            <tr>
+                              <th class="px-1" scope="row">Hình thức bài kiểm tra: </th>
+                              <td class="px-2">Câu đố</td>
+                            </tr>
+                            <tr>
+                              <th class="px-1" scope="row">Số lần kiểm tra: </th>
+                              <td class="px-2">
+                                {{userDocumentsection.nquizz}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th class="px-1" scope="row">Số lần tối đa: </th>
+                              <td class="ps-2">{{sectionquizz.nrepeat}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <table class="mb-3 ms-3 table-bordered">
+                          <thead>
+                                <tr>
+                                  <th scope="col">Lịch sử kiểm tra</th>
+                                </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="">
+                              <td class="px-2">Số câu: </td>
+                              <td class="px-2">Số câu: </td>
+                              <td class="px-2">Số câu: </td>
+                              <td class="px-2">Số câu: </td>
+                            </tr>
+                            
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                     <div class="d-flex flex-column">
+                      <p>Khi bạn nhấn vào nút 'Bắt đầu', bạn sẽ được chuyển đến một trang mới để thực hiện bài kiểm tra. Thời gian kiểm tra sẽ bắt đầu và không dừng lại cho đến khi hoàn thành. Bạn có muốn bắt đầu kiểm tra không?</p>
+                      <a class="btn btn-success" href="{% url 'assigningtest' courseid=documentary.id sectionid=cursection.id testid=sectionquizz.id userdocumentsectionid=userDocumentsection.id %}"><b>Bắt đầu</b></a>
+                     
+                    </div>
+                    </div>
+                  </div>
+              </div>
+              
+          </div>
+      </div>
+    </div>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+   // Function to update position
+   function updateSearchToastPosition() {
+    var myElement = $('#input');
+    var offset = myElement.offset();
+
+    $('#searchToast').css({
+        'top': offset.top + myElement.outerHeight(),
+        'left': offset.left
+    });
+}
+
+// Initial position setup
+$(document).ready(function () {
+    updateSearchToastPosition();
+    $('#searchToast').show();
+});
+
+// Trigger on screen resize
+$(window).resize(function () {
+    updateSearchToastPosition();
+});
+
+var timeout;
+
+    $('#input').on('input', function () {
+      $('#searchDiv').html=""
+        clearTimeout(timeout); // Clear previous timeout
+        timeout = setTimeout(function () {
+            
+            console.log('Text changed after 1 second of inactivity:', $('#textInput').val());
+        }, 700);
+    });
+        </script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+
+</html>

@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+<title>Sign Up</title>
+
+   
+<link rel="stylesheet" href="/static/css/bootstrap.css">
+
+</head>
+
+<style>
+  body {
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+  }
+  .login-form {
+      width: 300px;
+      padding: 30px;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      animation: fade-in 1s ease-in-out;
+  }
+  @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+  }
+</style>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarColor01">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Home
+              <span class="visually-hidden">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Separated link</a>
+            </div>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <input class="form-control me-sm-2" type="search" placeholder="Search">
+          <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+  </header>
+  <main>
+    
+  <body>
+    <div class="login-form">
+      <h1 class="text-center">Login</h1>
+      <form>
+          <div class="mb-3 form-floating">
+              <input type="text" class="form-control" id="username" placeholder="Username">
+              <label for="username">Username</label>
+          </div>
+          <div class="mb-3 form-floating">
+              <input type="password" class="form-control" id="password" placeholder="Password">
+              <label for="password">Password</label>
+          </div>
+          <div class="mb-3 form-floating">
+              <input type="password" class="form-control" id="repassword" placeholder="Re-enter Password">
+              <label for="repassword">Re-enter Password</label>
+          </div>
+          <button type="submit" class="btn btn-primary">Sign In</button>
+      </form>
+  </div>
+  </body>
+
+  </main>
+  <footer>
+    <p>&copy; 2023 UserApp</p>
+  </footer>
+  
+<script src="/static/js/bootstrap.js"></script>

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+  <title>Sign Up</title>
+{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+{% endblock %}
+{% block styles %}
+  <style>
+    body {
+      background-color: #c8f2f8;
+      justify-content: center;
+      align-items: center;
+    }
+    .form {
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      animation: fade-in 1s ease-in-out;
+    }
+    @keyframes fade-in {
+      from {
+        transform: translateY(-2rem);
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Apply for itemcard */
+    .itemcard {
+      width: 25rem;
+      height: 20rem;
+      margin: 10px;
+      border: 1px solid black;
+      transition: all 0.2s ease-in-out;
+    }
+    
+    .itemcard:hover { 
+      transform: rotateY(-20deg);
+      box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.25);
+      z-index: 1;
+      
+    }
+    .imgcard{
+      width:24.9rem;
+      height:13rem;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+<div class="container mt-5 " style="min-width: 20rem;">
+  <div class="container-fluid d-flex justify-content-center form" style="max-width: fit-content;">
+      <div class="text-center mt-3">
+          <h1>Ready to Start Learning?</h1>
+          <p>Explore our courses, take quizzes, and embark on your
+              learning journey today!</p>
+          <a class="btn btn-lg btn-primary p-3 mb-4"
+              href="{% url 'Courses' %}">Browse Courses</a>
+      </div>
+  </div>
+  
+</div>
+<div class="container-fluid mt-5">
+  <div class="row align-items-center">
+      <div class="col-sm-12 col-md-6 p-3 ">
+          <div class="bg-light form p-3" style="height: fit-content;max-width: fit-content;min-height: 20rem;">
+            {% if userdocumentary is None %}
+            <h3>Đăng nhập để xem những khóa học gần đây</h3>
+            {% else %}
+            <div>
+              <h3>Khóa học đăng ký gần đây</h3>
+              <div class="mb-3 itemcard">
+                <a id="itemcard" href="{% url 'coursedetail' courseid=userdocumentary.documentary.id %}" class="" style="width: 25.5rem;height:20.5rem; text-decoration:none; display: block;">
+                  <img class="imgcard" src="{{ userdocumentary.documentary.thumbnail.url}}" alt="No Image">
+                  <div class="overflow-hidden me-2">
+                    <h4 class="card-header my-auto bg-bl ms-2 mt-1 overflow-hidden" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{userdocumentary.documentary.title}}</h4>
+                  </div>
+                  <br>
+                  <div>
+                    <div class="d-flex flex-row-reverse p-2 me-2" style="float:right">
+                      {% if userdocumentary.documentary.skill_level == "beginner" %}
+                      <span class="ms-1 badge bg-success"><p class="my-auto fs-6">Beginner</p></span>{% endif %}
+                      {% if userdocumentary.documentary.skill_level == "intermediate" %}
+                      <span class="ms-1 badge bg-primary"><p class="my-auto fs-6">Intermediate</p></span>{% endif %}
+                      {% if userdocumentary.documentary.skill_level == "advanced" %}
+                      <span class="ms-1 badge bg-info"><p class="my-auto fs-6">Advanced</p></span>{% endif %}
+                      <b>Skill level:</b>
+                    </div>
+                  </div>
+                  <div class="d-flex p-2 bg-light" style="float:left;">
+                    <b class="text-secondary">Hoàn thành:</b>
+                    <span class="ms-1 badge bg-primary">
+                      {% if userdocumentary.perfinished is not 100 %}
+                      <p class="my-auto fs-7 text-white">{{userdocumentary.perfinished}}</p>
+                      {% else %}
+                      <p class="my-auto fs-7 text-primary">&#10004;</p>
+                      {% endif %}
+                    </span>
+                  </div>
+                </a>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+      </div>
+      <div class="col-sm-12 col-md-6 p-3 ">
+          <div class="bg-light form" style="height: 20rem;max-width: fit-content;"></div>
+      </div>
+  </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+  <script src="{% static 'js/bootstrap.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script>
+  </script>
+{% endblock %}
+

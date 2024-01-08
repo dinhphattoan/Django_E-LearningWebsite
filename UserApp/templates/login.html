@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <title>Sign Up</title>
+{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+{% endblock %}
+{% block styles %}
+  <style>
+    body {
+      background-color: #c8f2f8;
+      justify-content: center;
+      align-items: center;
+    }
+    .form {
+      width: 300px;
+      padding: 30px;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      animation: fade-in 1s ease-in-out;
+    }
+    @keyframes fade-in {
+      from {
+        transform: translateY(-2rem);
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <body>
+    <h2 class="text-center m-5">WELCOME BACK LEARNER!</h2>
+    <div class="form mx-auto">
+      
+      <h1 class="text-center mb-5">Login</h1>
+      <form id="login" method="POST">
+        {%  csrf_token %}
+      <div class="form-floating mb-1">
+        <input placeholder="" class="form-control" type="text" name="username" id="username">
+        <label for="username">Username</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input placeholder=""  class="form-control" type="password" name="password" id="password">
+        <label for="password" for="password">Password</label>
+      </div>
+      <span id="success" class="text-danger mb-3"></span>
+      <div >
+        <input class="btn btn-primary" type="submit" name="submit" value="Login">
+      </div>
+    </form>
+    </div>
+  </body>
+{% endblock %}
+{% block javascripts %}
+  <script src="{% static 'js/bootstrap.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script>
+    
+    $(document).on('submit', '#login', function (e) {
+      e.preventDefault();
+      $('#success').html('')
+      $.ajax({
+          type: 'POST',
+          url: "{% url 'login' %}",
+          data: {
+            username: $('#username').val(),
+            password: $('#password').val(),
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+          },
+          success: function (data) {
+            if(data!="") {
+              $('#success').html(data)
+            }
+            else{
+              window.location.href = "/"; // Redirect to index.html upon success
+          }
+          }
+      })
+  })
+  </script>
+{% endblock %}
+

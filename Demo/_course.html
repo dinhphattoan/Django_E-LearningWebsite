@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bootstrap.css">
+    <title>Document</title>
+  </head>
+  <style>
+  .itemcard {
+    width: 25rem;
+    height: 20rem;
+    margin: 10px;
+    border: 1px solid black;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .itemcard:hover { /* Apply hover styles to all direct children */
+    transform: rotateY(-20deg);
+    box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.25);
+    z-index: 1;
+    
+  }
+  .imgcard{
+    width:24.9rem;
+    height:13rem;
+  }
+  .summary
+  {
+    width: 23rem;
+    height: 7rem;
+  }
+</style>
+  <body>
+    <a href="{% url 'coursedetail' courseid=course.id %}" class
+      style="width: 25.5rem;height:20.5rem; text-decoration:none;">
+      <div class=" mb-3 itemcard mx-auto my-auto">
+        <img class="imgcard"
+          src="https://f.howkteam.vn/Upload/cke/images/1_LOGO%20SHOW%20WEB/3_Python/5_Python%20Django/0_L%E1%BA%ADp%20tr%C3%ACnh%20web%20v%E1%BB%9Bi%20Python%20b%E1%BA%B1ng%20Django_Howkteam_com.png"
+          alt="No Image">
+        <div class=" overflow-hidden">
+          <h4 class="card-header my-auto bg-bl ms-2 mt-1"
+            style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;height:2rem;">Lập
+            trình web với Python bằng Django</h4>
+        </div>
+        <br>
+        <div class="bg-dark ">
+          <div class="d-flex flex-row-reverse p-2 " style="float:right">
+
+            <span class="ms-1 badge bg-info"><p
+                class="my-auto fs-7">Nâng cao</p></span>
+            <b>Mức độ:</b>
+          </div>
+          <div class="d-flex p-2 bg-light" style="float:left;">
+            <b>Hoàn thành:</b>
+            <span class="ms-1 badge bg-success"><p
+                class="my-auto fs-7">70%</p></span>
+            
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

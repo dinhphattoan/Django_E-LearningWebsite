@@ -1,0 +1,249 @@
+
+
+    {% load static %}
+    {% load django_bootstrap5 %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+      {% block title %}{% endblock %}
+      {% block head %}
+      {% endblock %}
+    </head>
+    {% block styles %}{% endblock %}
+    <body>
+      <header>
+        {% include 'header.html' %}
+      </header>
+      <main>
+        {% block content %}
+        <div style="" class="d-flex flex-column mt-3 mx-auto">
+          <div class="align-content-end pe-4">
+            <div class="card bg-light p-1 mx-auto" style="width:12rem;float:right;">
+              <table class="table-bordered">
+                <thead>
+                  <tr>
+                    <td class="text-center">
+                      Thời gian còn lại
+                    </td>
+                  </tr>
+                </thead>
+                <tbody><tr>
+                  <td class="text-center" id="countdown">
+                      13:20
+                  </td>
+                </tr></tbody>
+                
+              </table>
+              <button class="btn btn-success my-2 mx-4">Hoàn thành</button>
+            </div>
+          </div>
+          <div class=" bg-light border mt-2" style="">
+            <h1 class="text-center">Bài kiểm tra trắc nghiệm</h1>
+          </div>
+      
+      
+        </div>
+        <hr class="my-4">
+          <div class="d-flex flex-column mx-auto mb-2" style="width: 50rem;">
+            <div class="card mx-auto " style="width: 50rem; height:15rem;">
+              <div class="card-header">
+                <div id="questiontitle" class="h6"></div>
+          
+              </div>
+              <div id="card-body" class="card-body">
+              </div>
+              <label id="errorlabel" class="text-danger"></label>
+            </div>
+            
+            <div style="width: inherit;">
+              <a id="btnprev" class="btn btn-secondary m-3" style="float:left;">Câu trước</a>
+              <a id="btnnext" class="btn btn-primary m-3" style="float:right;">Câu tiếp theo</a>
+            </div>
+            
+          </div>
+        
+
+        <div class="d-flex flex-row mt-5 mx-auto" style="width: fit-content;">
+          <table  class="table-bordered">
+            <tbody>
+              <tr>
+                {% with questions=quiztmp.tmp.related_questions.all %}
+                  {% for question in questions %}
+                    <td>
+                      {{ forloop.counter }}
+                    </td>
+                  {% endfor %}
+                {% endwith %}
+              </tr>      
+              <tr>
+                {% with questions=quiztmp.tmp.related_questions.all %}
+                {% for question in questions %}
+                  <td>
+                    <button class="btn btn-primary mx-1" style="width: 2.5rem;height:2.5rem;">
+                        {% if question.answer.answerorder is -1 %}
+                        {% if question.answer.answerorder is 0 %}
+                          A
+                        {% endif %}
+                        {% if question.answer.answerorder is 1 %}
+                          B
+                        {% endif %}
+                        {% if question.answer.answerorder is 2 %}
+                          C
+                        {% endif %}
+                        {% if question.answer.answerorder is 3 %}
+                          D
+                      {% endif %}
+                      {% endif %}
+                    </button>
+                  </td>
+                {% endfor %}
+              {% endwith %}
+                {% for answer in quiztmp.tmp.related_questions.all %}
+                
+                {% endfor %}
+                
+      
+              </tr>
+            </tbody>
+          </table>
+      </div>
+      
+        
+        {% endblock %}
+      </main>
+      <footer>
+        {% include 'footer.html' %}
+      </footer>
+      {% block javascripts %}
+      {% endblock %}
+      <script>
+        // Listen for the pageshow event
+        window.addEventListener('pageshow', function(event) {
+          // If the navigation type is 'back_forward'
+          if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+              // Reload the page to update the data
+              location.reload();
+          }
+      });
+/////////////Couting time Interval
+      // Set the countdown time in seconds
+  let countdownTime = {{quiztmp.timequiz}};
+
+  // Function to update the countdown element
+  function updateCountdown() {
+    const minutes = Math.floor(countdownTime / 60);
+    const seconds = Math.floor(countdownTime % 60);
+    
+    document.getElementById('countdown').innerText = `${minutes}:${seconds}`;
+  }
+  function nextquestion(){
+
+  }
+  // Function to handle countdown
+  function startCountdown() {
+    updateCountdown();
+
+    // Update countdown every second
+    let countdownInterval = setInterval(function() {
+      countdownTime--;
+
+      // Check if countdown is complete
+      if (countdownTime <= 0) {
+        clearInterval(countdownInterval); // Stop the countdown
+        
+      } else {
+        updateCountdown();
+      }
+    }, 1000); // 1000 milliseconds = 1 second
+  }
+  function submitText(){
+    
+  }
+  // Start the countdown when the page loads
+  window.onload = startCountdown;
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+const csrftoken = getCookie('csrftoken');
+  ///Ajax handles
+  $("#btnnext").on("click", function (e) {
+    e.preventDefault();
+    
+    // Get the ID of the tmp_UserQuizQuestionAnswer
+    var idtmp = {{quiztmp.tmp.id}};
+
+    function optionChoiceHandler(event) {
+        var elementID = event.target.id;
+        console.log('Option {0} picked'.replace("{0}", elementID));
+        // Handle the checked radio button
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'ajax_answerpick' idtmp=0 answerorder=1 %}".replace('0', idtmp).replace('1', event.target.id),
+            data: {
+            },
+            headers:{
+              'X-CSRFToken':csrf_token
+            },
+            success: function (data) {
+                if (data === "") {
+                    $('#errorlabel').html('Error picking answer, please contact any supporter!');
+                }
+            },
+            error: function (data) {
+                $('#errorlabel').html('Error picking answer, please contact any supporter!');
+            }
+        });
+    }
+    // Make AJAX request
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'ajax_next_pre_question' idtmp=0  %}".replace('0', idtmp),
+        data: {
+        },
+        headers: {
+          'X-CSRFToken': csrftoken,
+        },
+        success: function (data) {
+            var tmp = JSON.parse(response.tmp);
+            var tmpansweroptions = JSON.parse(response.answeroptions);
+            console.log(tmp, tmpansweroptions)
+            $("#card-body").html('<input type="hidden" name="csrfmiddlewaretoken" value="{% csrf_token %}">');
+            
+
+            for (var i = 0; i < data.answers.length; i++) {
+                var optionIndex = i;
+
+                var newOption = `
+                    <div class="form-check my-2 border">
+                        <input id="option${optionIndex}" class="form-check-input" type="radio" name="options" value="${data.answers[i].answerorder}">
+                        <label class="form-check-label" for="option${optionIndex}">
+                            ${data.answers[i].text}
+                        </label>
+                    </div>
+                `;
+
+                $("#card-body").append(newOption);
+            }
+
+            // Update the content with the fetched data
+            $('#questiontitle').html(data.tmp.question.text);
+
+            // Add event listener to each radio button
+            $('input[name="options"]').on("change", optionChoiceHandler);
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            console.log('Error:', errorThrown);
+        }
+    });
+});
+
+      </script>
+    </body>
+    </html>
+    

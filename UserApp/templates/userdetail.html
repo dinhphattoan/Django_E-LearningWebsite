@@ -1,0 +1,50 @@
+{% load static %}
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+  {% block title %}{% endblock %}
+  {% block head %}
+  {% endblock %}
+</head>
+{% block styles %}{% endblock %}
+<body>
+  <header>
+    {% include 'header.html' %}
+  </header>
+  <main>
+    {% block content %}
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h2>User profile</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                    </table>
+                </div>
+            <div>
+        </div>
+    {% endblock %}
+  </main>
+  <footer>
+    {% include 'footer.html' %}
+  </footer>
+  {% block javascripts %}
+  {% endblock %}
+  <script>
+    
+    // Listen for the pageshow event
+    window.addEventListener('pageshow', function(event) {
+      // If the navigation type is 'back_forward'
+      if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+          // Reload the page to update the data
+          location.reload();
+      }
+  });
+  </script>
+</body>
+</html>
