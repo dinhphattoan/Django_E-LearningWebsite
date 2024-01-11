@@ -1,129 +1,232 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load django_bootstrap5 %}
 
 {% block title %}
-  <title>All Courses</title>
+  <title>Danh sách học phần</title>
 {% endblock %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
 {% endblock %}
 {% block styles %}
-<style>
-  .itemcard {
-    width: 25rem;
-    height: 20rem;
-    margin: 10px;
-    border: 1px solid black;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .itemcard:hover { /* Apply hover styles to all direct children */
-    transform: rotateY(-20deg);
-    box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.25);
-    z-index: 1;
+
+  <style>
+    .carditem{
+      transition: all 0.2s ease-in-out;
+    }
+    .carditem :hover { /* Apply hover styles to all direct children */
+      transform: rotateY(-20deg);
+      box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.25);
+      z-index: 1;
+      
+    }
+    .itemcard {
+      width: 25rem;
+      height: 20rem;
+      margin: 10px;
+      transition: all 0.2s ease-in-out;
+      border-radius: 35px;
+      border:1px solid black;
+    }
     
-  }
-  .imgcard{
-    width:24.9rem;
-    height:13rem;
-  }
-  .flex-container{
-    display: flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    overflow:auto;
-    max-height:30rem;
-  }
-  .flex-container-singlerow{
-    display:flex;
-    flex-direction:row;
-    align-items: center;
-    overflow:auto;
-  }
-</style>
+    .itemcard:hover { /* Apply hover styles to all direct children */
+      transform: rotateY(-20deg);
+      box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.25);
+      z-index: 1;
+      
+    }
+    .imgcard{
+      width:24.9rem;
+      height:13rem;
+      
+    }
+    .flex-container{
+      display: flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      overflow:auto;
+    }
+    .flex-container-singlerow{
+      display:flex;
+      flex-direction:row;
+      align-items: center;
+      overflow:auto;
+    }
+    body{
+      background-color: gray;
+    }
+
+  </style>
 {% endblock %}
 {% block content %}
-<div class="container-fluid">
-    <h3 class="m-3">Assigned Course:</h3>
+<section style="height: 7rem;">
+</section>
+
+
+<section>
+      {% if request.user.is_authenticated %}
+      <h3 class="ms-3">Khóa học đã đăng ký</h3>
+    {% else %}
+      <h3 class="ms-3">Đăng nhập để đăng ký khóa học mới</h3>
+    {% endif %}
     {% if AssignedCourses is not None %}
-    <div class=" bg-light border border-1 flex-container-singlerow" >
+    <div class="mx-auto mt-3 row" style="box-shadow: inset 0px 0px 5px;padding: 20px;">
       {% for course in AssignedCourses  %}
-      <div class="mb-3 itemcard">
-        <a id="itemcard" href="{% url 'coursedetail' courseid=course.documentary.id %}" class="" style="width: 25.5rem;height:20.5rem; text-decoration:none; display: block;">
-          <img class="imgcard" src="{{ course.documentary.thumbnail.url}}" alt="No Image">
-          <div class="overflow-hidden me-2">
-            <h4 class="card-header my-auto bg-bl ms-2 mt-1 overflow-hidden" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{course.documentary.title}}</h4>
-          </div>
-          <br>
-          <div>
-            <div class="d-flex flex-row-reverse p-2 me-2" style="float:right">
+      <a href="{% url 'coursedetail' courseid=course.documentary.id %}" style="width: 450px;height: 300px;box-shadow: 0px 0px 9px 2px;border-top-left-radius: 20px;border-top-right-radius: 20px;border-bottom-right-radius: 20px;border-bottom-left-radius: 20px;padding: 10px;">
+        <div style="width: 430;height: 210px;">
+          <img width="100" height="80" style="width: 100%;height: 100%;border-top-left-radius: 10px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-bottom-left-radius: 10px;" src="{{ course.documentary.thumbnail.url}}" />
+        </div>
+        <div style="height: fit-content;">
+            <h1 class="h4 pt-2 overflow-hidden" style="text-align: left;padding-left: 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{course.documentary.title}}</h1>
+            <div class="text-white">
+                <div class="float-start" style="width: fit-content;height: 34px;">
+                  <label class="form-label text-dark my-auto" style="padding-left: 10px;">Hoàn thành: 
+                    {% if course.perfinished is not 100 %}
+                    {{course.perfinished}}
+                    {% else %}
+                    <p class="my-auto fs-7 text-primary">&#10004;</p>
+                    {% endif %}
+                  </label>
+                </div>
+                <label class="form-label float-end rounded-pill bg-success my-auto" style="padding: 5px;padding-right: 10px;padding-left: 10px;font-weight: bold;">
               {% if course.documentary.skill_level == "beginner" %}
-              <span class="ms-1 badge bg-success"><p class="my-auto fs-6">Beginner</p></span>{% endif %}
+                Cơ bản{% endif %}
               {% if course.documentary.skill_level == "intermediate" %}
-              <span class="ms-1 badge bg-primary"><p class="my-auto fs-6">Intermediate</p></span>{% endif %}
+                Trung cấp{% endif %}
               {% if course.documentary.skill_level == "advanced" %}
-              <span class="ms-1 badge bg-info"><p class="my-auto fs-6">Advanced</p></span>{% endif %}
-              <b>Skill level:</b>
+                Nâng cao{% endif %}
+              </label>
             </div>
-          </div>
-          <div class="d-flex p-2 bg-light" style="float:left;">
-            <b class="text-secondary">Hoàn thành:</b>
-            <span class="ms-1 badge bg-primary">
-              {% if course.perfinished is not 100 %}
-              <p class="my-auto fs-7 text-white">{{course.perfinished}}</p>
-              {% else %}
-              <p class="my-auto fs-7 text-primary">&#10004;</p>
-              {% endif %}
-            </span>
-          </div>
-        </a>
-      </div>
-      
+        </div>
+      </a>
       {% endfor %}
     </div>
     {% endif %}
-    <br>
-    <h3 class="m-3">New Course:</h3>
-    <div class="flex-container mt-2 bg-light border border-1 pt-2" >
-      
-      {% for course in Courses  %}
-      <a href="{% url 'coursedetail' courseid=course.id %}" class="" style="width: 25.5rem;height:20.5rem; text-decoration:none;">
-          <div class=" mb-3 itemcard mx-auto my-auto">
-            <img class="imgcard" src="{{ course.thumbnail.url}}" alt="No Image" >
-            <div class=" overflow-hidden">
-              <h4 class="card-header my-auto bg-bl ms-2 mt-1" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;height:2rem;">{{course.title}}</h4>
-            </div>
-            <br>
-            <div class="d-flex flex-row-reverse p-1">
-                
-            </div>
-            <div class="">
-              <div class="d-flex flex-row-reverse p-2 " style="float:right">
-                {% if course.skill_level == "beginner" %}
-                <span class="ms-1 badge bg-success"><p class="my-auto fs-6">Beginner</p></span>{% endif %}
-                {% if course.skill_level == "intermediate" %} 
-                <span class="ms-1 badge bg-primary"><p class="my-auto fs-6">Intermediate</p></span>{% endif %}
-                {% if course.skill_level == "advanced" %} 
-                <span class="ms-1 badge bg-info"><p class="my-auto fs-6">Advanced</p></span>{% endif %}
+</section>
+<section
+ 
+  class="slider4 mbr-embla cid-u0YpjzFGKa"
+  id="gallery-5-u0YpjzFGKa"
+>
+  <div class="container-fluid">
+    <div class="row mb-5 justify-content-center">
+      <div class="col-12 content-head">
+        <h3
+          class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"
+        >
+          <strong>Danh sách khóa học mới</strong>
+        </h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div
+          class="embla position-relative"
+          data-skip-snaps="true"
+          data-align="center"
+          data-contain-scroll="trimSnaps"]
+          data-draggable="true"
+          data-loop = "true"
+        >
+          <div class="embla__viewport">
+            <div class="embla__container">
+              {% for course in Courses %}
+              <div class="embla__slide slider-image item" style="margin-left: 10x; margin-right: 10px;">
+                <div class="slide-content">
+                  <div class="slide-content" style="width: 700px;height:400px;">
+                    <a href="{% url 'coursedetail' courseid=course.id %}" id="carditem" class="text-start container-fluid" style="max-width: 480px;opacity: 0.88;border-top-left-radius: 20px;border-top-right-radius: 20px;border-bottom-right-radius: 20px;border-bottom-left-radius: 20px;padding: 20px;transition: ease-in-out;border-width: 1px;box-shadow: 0px 0px 9px 2px;margin: 10px;">
+                      <div style="text-align: center;height: 250px;width: inherit;border-width: 1px;">
+                        <img class="mx-auto img-thumbnail" style="width: 100%;height: 100%;" width="366" height="250" src="{{ course.thumbnail.url}}" />
+                      </div>
+                      <div style="text-align: left;height: fit-content;">
+                          <h1 class="h4 overflow-hidden" style="padding-right: 0px;margin: 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{course.title}}</h1>
+                          <div style="margin-top: 10px;text-align: right;" class="text-white">
+                            <label class="form-label my-auto small" style="float: left;font-weight: bold;text-align: left;padding: 5px;">Hoàn thành: 70%</label>
+                              {% if course.skill_level == "beginner" %}
+                              <label id="labellevel-6" class="form-label bg-success rounded-pill my-auto" style="font-weight: bold;padding: 5px;padding-left: 10px;padding-right: 10px;">
+                                Cơ bản
+                              {% endif %}
+                              {% if course.skill_level == "intermediate" %}
+                              <label id="labellevel-6" class="form-label bg-info rounded-pill my-auto" style="font-weight: bold;padding: 5px;padding-left: 10px;padding-right: 10px;">
+                              Trung cấp
+                              {% endif %}
+                              {% if course.skill_level == "advanced" %}
+                              <label id="labellevel-6" class="form-label bg-warning rounded-pill my-auto" style="font-weight: bold;padding: 5px;padding-left: 10px;padding-right: 10px;">
+                                Nâng cao
+                              {% endif %}
+                            </label>
+                      
+                          </div>
+                      </div>
+                    </a>
+                </div>
+                </div>
+              </div>
+              {% endfor %}
               
-              <b>Skill level:</b>
-              </div>
-              <div class="d-flex p-2 bg-light" style="float:left;">
-                
-              </div>
+
+
+
             </div>
           </div>
-        </a>
-      {% endfor %}
-      
+          <button class="embla__button embla__button--prev">
+            <span
+              class="mobi-mbri mobi-mbri-arrow-prev"
+              aria-hidden="true"
+            ></span>
+            <span
+              class="sr-only visually-hidden visually-hidden"
+            >Previous</span>
+          </button>
+          <button class="embla__button embla__button--next">
+            <span
+              class="mobi-mbri mobi-mbri-arrow-next"
+              aria-hidden="true"
+            ></span>
+            <span class="sr-only visually-hidden visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-  
+</section>
 
+<section class=" footer4 cid-u0Wv5stFPl" style="" once="footers" id="footer-4-u0Wv5stFPl">
+  <div class="container">
+      <div class="media-container-row align-center mbr-white">
+          <div class="col-12">
+              <p class="mbr-text mb-0 mbr-fonts-style display-7">
+                  © 2024 PyWizard. All Rights Reserved.
+              </p>
+          </div>
+      </div>
+  </div>
+</section>
 {% endblock %}
 {% block javascripts %}
-  <script src="{% static 'js/bootstrap.js' %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script>
+    
+    $(document).on('submit', '#login', function (e) {
+      e.preventDefault();
+      $('#success').html('')
+      $.ajax({
+          type: 'POST',
+          url: "{% url 'login' %}",
+          data: {
+            username: $('#username').val(),
+            password: $('#password').val(),
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+          },
+          success: function (data) {
+            if(data!="") {
+              $('#success').html(data)
+            }
+            else{
+              window.location.href = "/"; // Redirect to index.html upon success
+          }
+          }
+      })
+  })
+  </script>
 {% endblock %}
 

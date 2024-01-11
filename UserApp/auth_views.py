@@ -5,9 +5,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib import messages
 from UserApp.forms import myUserCreationForm
+from . import models
 from django.contrib.auth.decorators import login_required
 def login_view(request):
-  
+    if request.user.is_authenticated:
+        return redirect('default_view')
     if request.method == 'POST':
         data = ""
         username = request.POST['username']
@@ -51,4 +53,8 @@ def password_reset_view(request):
         form = PasswordResetForm()
 
     return render(request, 'password_reset.html', {'form': form})  # Create a password_reset.html template for the password reset form
-
+def userprofile(request,iduser):
+    userinfo = models.UserInfo.objects.filter(user__pk = iduser).first()
+    if userinfo:
+        return render(request, "profile.html",{"userinfo": userinfo})
+    return HttpResponse(request,"Người dùng không tồn tại")

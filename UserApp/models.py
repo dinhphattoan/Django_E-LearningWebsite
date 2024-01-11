@@ -1,14 +1,27 @@
+import math
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save,post_delete
 from django.dispatch import receiver
 import pytz
 from datetime import datetime, timedelta
 # Create your models here.
 
 
-
+class UserInfo(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    address = models.TextField(blank = True)
+    phone = models.TextField(blank=True)
+    portrait = models.FileField(null=True,upload_to="User/")
+    bio = models.TextField(blank = True)
+    href_facebook = models.TextField(blank = True)
+    href_twitter = models.TextField(blank = True)
+    href_blog = models.TextField(blank = True)
+    href_github = models.TextField(blank = True)
+    def __str__(self):
+       return f"{self.user.pk} User: {self.user.username}| {self.user.first_name} {self.user.last_name}" 
+    
 
 class Documentary(models.Model):
     SKILL_LEVEL_CHOICES = [
@@ -43,6 +56,19 @@ class UserDocumentary(models.Model):
         super().__init__(*args, **kwargs)
     def __str__(self):
         return self.user.username + " - " + self.documentary.title + " | process: " + str(self.perfinished)
+    def update_per_state(self):
+        completed_sections_count = UserDocumentSection.objects.filter(userdocumentary=self, completed=True).count()
+        total_sections_count = DocumentarySector.objects.filter(documentary=self.documentary).count()
+
+        # Avoid division by zero by checking if total_sections_count is not zero
+        if total_sections_count != 0:
+            self.perfinished = completed_sections_count / total_sections_count
+            self.perfinished*=100
+        else:
+            self.perfinished = 0
+
+        self.save(force_update=True)
+
     def get_process_percent_value(self):
         return self.perfinished
     
@@ -56,6 +82,7 @@ class Quiz(models.Model):
     documentarysector = models.ForeignKey(DocumentarySector, on_delete=models.CASCADE, null=True, blank=True)
     questions = models.ManyToManyField('Question',blank=True)
     nrepeat = models.IntegerField(default = -1)
+    scorerequirement = models.IntegerField(default=0)
     def getnQuestion(self):
         return self.questions.count()
     def __str__(self):
@@ -95,21 +122,20 @@ class UserDocumentSection(models.Model):
     userdocumentary = models.ForeignKey(UserDocumentary, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
     quiz_score = models.IntegerField(null=True, blank=True, default=-1)
+    #By default the score is 70% of total for requirement
     scorerequirement = models.IntegerField(default=0)
     datemodified = models.DateTimeField(blank=True, default=datetime.now)
-    def __str__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
+    def __str__(self):
         return f"{self.userdocumentary.user.username} - {self.documentarysector.title}"
-    
     def nquiztaken(self):
         return Quiz.objects.filter(userdocumentsection=self).count()
-    def update_static(self):
-        userquiz = UserQuiz.objects.filter(userdocumentsection=self).first()
-        if userquiz:
-            questionanswers = QuestionAnswer.objects.filter(userquiz=userquiz)
-            self.nquizz = questionanswers.count()
-            self.quiz_score = questionanswers.filter(answer__is_correct=True).count()
-            self.update_quizzuserdoc_state()
+    def update_score_requirement(self):
+        nqestion =Question.objects.filter(quizz = Quiz.objects.get(documentarysector =self.documentarysector)).all().count()
+        self.scorerequirement = math.floor((nqestion/100)*70)
+        self.save(force_update=True)
     def update_quizzuserdoc_state(self):
         self.quiz_score= UserQuiz.objects.filter(userdocumentsection = self).order_by('quizscore').first().quizscore
         self.completed = self.quiz_score >= self.scorerequirement
@@ -121,6 +147,7 @@ class UserQuiz(models.Model):
     testdate = models.DateTimeField(default=timezone.now)
     testminiutes = models.IntegerField(default=15)
     quizscore = models.IntegerField(default=0)
+    quizisover = models.BooleanField(default=False)
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
     def __str__(self):
@@ -128,14 +155,16 @@ class UserQuiz(models.Model):
 
     def update_state(self):
         self.quizscore = QuestionAnswer.objects.filter(userquiz=self).filter(answer__is_correct=1).count()
+        self.quizisover=True
         return self.quizscore
 
     def isover(self):
-        print((self.testdate+timedelta(minutes=15)).timestamp() , datetime.now().timestamp())
-        print(self.testdate,datetime.now())
-        print((self.testdate+timedelta(minutes=15)).replace(tzinfo=None) < datetime.now())
-        return (self.testdate+timedelta(minutes=15)).replace(tzinfo=None) < datetime.now()
-
+        if not self.quizisover:
+            print((self.testdate+timedelta(minutes=15)).timestamp() , datetime.now().timestamp())
+            print(self.testdate,datetime.now())
+            print((self.testdate+timedelta(minutes=15)).replace(tzinfo=None) < datetime.now())
+            return (self.testdate+timedelta(minutes=15)).replace(tzinfo=None) < datetime.now()
+        return True
     def getsecondrange(self):
         return (timedelta(minutes=15)-(self.joindate.replace(tzinfo=None) - self.testdate.replace(tzinfo=None))).total_seconds()
 
@@ -154,22 +183,33 @@ class tmp_UserQuizQuestionAnswer(models.Model):
     #question index current working on
     questionindex = models.IntegerField(default=0)  # Start with 0 as the first question index
     related_questions = models.ManyToManyField('tmp_UQ_QuestionUser', related_name='related_answers', blank=True)
-    #get all answers on question index
-    def get_answer_on_question_index(self):
-        current_question = self.questions.all()[self.questionindex]
-        return QuestionAnswer.objects.filter(userquiz=self.userquiz, answer__question=current_question)
-    #proccesing submit answer for the question on index
-    def submit_question(self, answer):
-        current_question = self.q.all()[self.questionindex]
-        question_answer = QuestionAnswer.objects.create(userquiz=self.userquiz, answer=answer, question=current_question)
-
-        # Move to the next question
-        self.questionindex += 1
-        self.save()
-        
 class tmp_UQ_QuestionUser(models.Model):
     UQ_Question = models.ForeignKey(tmp_UserQuizQuestionAnswer,models.CASCADE)
     question = models.ForeignKey(Question,models.CASCADE)
     answer = models.ForeignKey(Answer,models.CASCADE,null=True)
     questionindex = models.IntegerField(default=-1)
-    
+
+@receiver(post_save, sender=Question)
+def question_post_save(sender, instance, created, **kwargs):
+    """
+    This function will be called after an instance of Question is saved.
+    'created' argument indicates whether the instance was created or updated.
+    """
+    if created:
+        # Assuming you have a ForeignKey from Question to Quizz and Quizz to DocumentarySector
+        documentary_sector = instance.quizz.documentarysector
+        listuserdocumentationsection =  UserDocumentSection.objects.filter(documentarysector=documentary_sector).all()
+        for userdocumentationsection in listuserdocumentationsection:
+            userdocumentationsection.update_score_requirement()
+            
+@receiver(post_delete, sender=Question)
+def question_post_save(sender, instance, **kwargs):
+    """
+    This function will be called after an instance of Question is saved.
+    'created' argument indicates whether the instance was created or updated.
+    """
+    documentary_sector = instance.quizz.documentarysector
+    listuserdocumentationsection =  UserDocumentSection.objects.filter(documentarysector=documentary_sector).all()
+    for userdocumentationsection in listuserdocumentationsection:
+        userdocumentationsection.update_score_requirement()
+            

@@ -4,20 +4,20 @@ from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 class myUserCreationForm(UserCreationForm):
     username = forms.CharField(widget = forms.TextInput(attrs={
         'label' : 'Username',
-        'class': "form-control",
+        'class': "form-control fs-5",
         'id' : "usernametextinput",
         'type' : 'text',
         'placeholder' : "Enter username"
         }))
     password1 = forms.CharField(widget = forms.TextInput(attrs={
-        'class': "form-control",
+        'class': "form-control fs-5",
         'id' : "floatingpasswordinput1",
         'type' : 'password',
         'placeholder' : "Enter your password"
         }))
     password2 = forms.CharField(widget = forms.TextInput(attrs={
         'label' : "Confirm Password ",
-        'class': "form-control",
+        'class': "form-control fs-5",
         'id' : "floatingpasswordinput2",
         'type' : 'password',
         'placeholder' : "Confirm your password"
@@ -66,20 +66,20 @@ class UserChangePasswordForm(UserCreationForm):
 class DocumentaryForm(forms.ModelForm):
     username = forms.CharField(widget = forms.TextInput(attrs={
         'label' : 'Username',
-        'class': "form-control",
+        'class': "form-control fs-5",
         'id' : "usernametextinput",
         'type' : 'text',
         'placeholder' : "Enter username"
         }))
     password1 = forms.CharField(widget = forms.TextInput(attrs={
-        'class': "form-control",
+        'class': "form-control fs-5",
         'id' : "floatingpasswordinput1",
         'type' : 'password',
         'placeholder' : "Enter your password"
         }))
     password2 = forms.CharField(widget = forms.TextInput(attrs={
         'label' : "Confirm Password ",
-        'class': "form-control",
+        'class': "form-control fs-5",
         'id' : "floatingpasswordinput2",
         'type' : 'password',
         'placeholder' : "Confirm your password"

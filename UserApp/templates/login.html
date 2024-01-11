@@ -5,17 +5,19 @@
   <title>Sign Up</title>
 {% endblock %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 {% endblock %}
 {% block styles %}
+
   <style>
+
     body {
       background-color: #c8f2f8;
       justify-content: center;
       align-items: center;
     }
     .form {
-      width: 300px;
+      width: 350px;
       padding: 30px;
       border-radius: 10px;
       background-color: #fff;
@@ -31,34 +33,40 @@
         opacity: 1;
       }
     }
+    .form-control{
+      margin-bottom: 20px;
+    }
   </style>
 {% endblock %}
 {% block content %}
-  <body>
-    <h2 class="text-center m-5">WELCOME BACK LEARNER!</h2>
+<section style="height: 10rem;">
+</section>
+<section>
+  <h1 class="text-center">Chào mừng trở lại!</h1>
+  <p class="text-muted text-center mb-3">Hãy cùng tiếp tục cuộc hành trình?</p>
     <div class="form mx-auto">
       
-      <h1 class="text-center mb-5">Login</h1>
+      <h1 class="text-center mb-5">ĐĂNG NHẬP</h1>
       <form id="login" method="POST">
         {%  csrf_token %}
       <div class="form-floating mb-1">
-        <input placeholder="" class="form-control" type="text" name="username" id="username">
-        <label for="username">Username</label>
+        <input placeholder="" class="form-control fs-5" type="text" name="username" id="username">
+        <label for="username">Tên đăng nhập</label>
       </div>
       <div class="form-floating mb-3">
-        <input placeholder=""  class="form-control" type="password" name="password" id="password">
-        <label for="password" for="password">Password</label>
+        <input placeholder=""  class="form-control fs-5" type="password" name="password" id="password">
+        <label for="password" for="password">Mật khẩu</label>
       </div>
-      <span id="success" class="text-danger mb-3"></span>
-      <div >
-        <input class="btn btn-primary" type="submit" name="submit" value="Login">
+      <span id="success" class=" mb-3 text-danger" style=""></span>
+      <div class="align-content-end d-flex flex-column">
+        <input class="btn btn-primary" type="submit" name="submit" value="Đăng nhập">
       </div>
     </form>
-    </div>
-  </body>
+  </div>
+</section>
+    <br><br><br>
 {% endblock %}
 {% block javascripts %}
-  <script src="{% static 'js/bootstrap.js' %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script>
     
@@ -78,8 +86,15 @@
               $('#success').html(data)
             }
             else{
-              window.location.href = "/"; // Redirect to index.html upon success
-          }
+              if (window.history.length > 1)
+              {
+                window.history.back();
+              }
+              else{
+                window.location.href = "/"; // Redirect to index.html upon success
+              }
+              }
+              
           }
       })
   })

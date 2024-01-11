@@ -38,9 +38,12 @@ urlpatterns = [
     path("accounts/password_reset/done/",auth_view.PasswordResetDoneView.as_view(), name="password_reset_done"),
     path("accounts/reset/<uidb64>/<token>/",auth_view.PasswordResetConfirmView.as_view(),name="password_reset_confirm"),
     path("accounts/reset/done/",auth_view.PasswordResetDoneView.as_view(),name='password_reset_complete'),
-    
+    path("User/<int:iduser>/",auth_views.userprofile,name="userprofile"),
     #ajax url
-    path("Course/documentaries/Test/next/<int:idtmp>", views.ajax_next_pre_question, name="ajax_next_pre_question"),
-    path("Course/documentaries/Test/prev/<int:idtmp>", views.ajax_next_pre_question, name="ajax_next_pre_question"),
-    path("Course/documentaries/Test/<int:idtmp>&<int:answerorder>", views.ajax_answerpick, name="ajax_answerpick"),
+    path("Course/documentaries/Test/next/<int:idtmp>/<int:direction>", views.ajax_next_pre_question, name="ajax_next_pre_question"),
+    path("Course/documentaries/Test/prev/<int:idtmp>/<int:direction>", views.ajax_next_pre_question, name="ajax_next_pre_question"),
+    path("Course/documentaries/Test/<int:idtmp>/questionnavat/<int:questionindex>", views.ajax_question_nav_at_index, name="ajax_question_nav_at_index"),
+    path('ajax-answer-pick/<int:idtmpUQ>/<int:idquestion>/<int:answerorder>/', views.ajax_answerpick, name='ajax_answerpick'),
+    path("Course/documentaries/Test/<int:idtmp>",views.ajax_is_join_test,name="ajax_is_join_test"),
+    path("Course/documentaries/Test/submit/<int:idtmpUQA>",views.finalizetest,name="finalizetest"),
 ]

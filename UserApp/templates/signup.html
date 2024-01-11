@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load django_bootstrap5 %}
-
 {% block title %}
   <title>Sign Up</title>
 {% endblock %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 {% endblock %}
 {% block styles %}
+
   <style>
+
     body {
       background-color: #c8f2f8;
       justify-content: center;
       align-items: center;
     }
     .form {
-      width: 300px;
+      width: 350px;
       padding: 30px;
       border-radius: 10px;
       background-color: #fff;
@@ -32,32 +32,75 @@
         opacity: 1;
       }
     }
+    .form-control{
+      margin-bottom: 20px;
+    }
   </style>
 {% endblock %}
 {% block content %}
-  <body>
-    <h2 class="text-center m-5">WELCOME NEW LEARNER!</h2>
-    <div class="form mx-auto">
-      <h1 class="text-center mb-5">Sign Up</h1>
-      <form method="post">
-        {% csrf_token %}
-        <div class="form-floating mb-3">
-          {{ form.username}}
-          <label for="usernametextinput">Username</label>
-        </div>
-        <div class="form-floating mb-3">
-          {{ form.password1}}
-          <label for="floatingpasswordinput1">Password</label>
-        </div>
-        <div class="form-floating mb-3">
-          {{ form.password2}}
-          <label for="floatingpasswordinput2">Confirm Password</label>
-        </div>
-        <button class="btn btn-primary" type="submit">Sign Up</button>
-      </form>
-    </div>
-  </body>
+<section style="height: 10rem;">
+</section>
+<section>
+  <h1 class="text-center">Chào mừng người mới!</h1>
+  <p class="text-muted text-center mb-3">Sẵn sàng chuyến phiêu lưu mới?</p>
+  <div class="form mx-auto">
+    <h1 class="text-center mb-5">Tạo tài khoản</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-floating mb-3">
+        {{ form.username}}
+        <label for="usernametextinput">Tên đăng nhập</label>
+      </div>
+      <div class="form-floating mb-3">
+        {{ form.password1}}
+        <label for="floatingpasswordinput1">Mật khẩu</label>
+      </div>
+      <div class="form-floating mb-3">
+        {{ form.password2}}
+        <label for="floatingpasswordinput2">Nhập lại mật khẩu</label>
+      </div>
+      <button class="btn btn-primary" type="submit">Đăng ký</button>
+    </form>
+  </div>
+</section>
+    <br><br><br>
+    <section class=" footer4 cid-u0Wv5stFPl" style="" once="footers" id="footer-4-u0Wv5stFPl">
+      <div class="container">
+          <div class="media-container-row align-center mbr-white">
+              <div class="col-12">
+                  <p class="mbr-text mb-0 mbr-fonts-style display-7">
+                      © 2024 PyWizard. All Rights Reserved.
+                  </p>
+              </div>
+          </div>
+      </div>
+    </section>
 {% endblock %}
 {% block javascripts %}
-  <script src="{% static 'js/bootstrap.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script>
+    
+    $(document).on('submit', '#login', function (e) {
+      e.preventDefault();
+      $('#success').html('')
+      $.ajax({
+          type: 'POST',
+          url: "{% url 'login' %}",
+          data: {
+            username: $('#username').val(),
+            password: $('#password').val(),
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+          },
+          success: function (data) {
+            if(data!="") {
+              $('#success').html(data)
+            }
+            else{
+              window.location.href = "/"; // Redirect to index.html upon success
+          }
+          }
+      })
+  })
+  </script>
 {% endblock %}
+

@@ -12,7 +12,8 @@ import os
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-
+def index_ai(request):
+    return render(request,"index_ai.html")
 
 def index(request):
     recent_userdocumentary = recent_quizz = None
@@ -150,52 +151,55 @@ def coursedetail(request, courseid, sectionid=None):
     userdocumentary = None
     userquizzesa = runningquizz = None
     sectionquizz = UserDocumentSection = userquizzes = nquestions = None
-
+    questions = None
     if request.user.is_authenticated:
         userdocumentary = models.UserDocumentary.objects.filter(
             user=request.user, documentary=documentary
         ).first()
 
     if sectionid:
-        firstsection = sections.filter(id=sectionid).first()
+        cursection = sections.filter(id=sectionid).first()
 
-        if firstsection:
+        if cursection:
             content_path = os.path.join(
-                settings.MEDIA_ROOT, firstsection.contentfile.path
+                settings.MEDIA_ROOT, cursection.contentfile.path
             )
 
             with open(content_path, "rb") as docx_file:
-                result = mammoth.convert_to_html(docx_file).value
-                soup = BeautifulSoup(result, "html.parser")
+                sectionmetacontent = mammoth.convert_to_html(docx_file).value
+                soup = BeautifulSoup(sectionmetacontent, "html.parser")
 
     else:
-        firstsection = None
+        cursection = None
         metadata = None
-        result = None
+        sectionmetacontent = None
 
-    if firstsection:
+    if cursection:
         sectionquizz = models.Quiz.objects.filter(
-            documentarysector=firstsection
+            documentarysector=cursection
         ).first()
         if request.user.is_authenticated:
             if (
                 userdocumentary
                 and not models.UserDocumentSection.objects.filter(
-                    documentarysector=firstsection, userdocumentary=userdocumentary
+                    documentarysector=cursection, userdocumentary=userdocumentary
                 ).first()
             ):
                 tmpUserDocumentSection = models.UserDocumentSection(
-                    documentarysector=firstsection,
+                    documentarysector=cursection,
                     userdocumentary=userdocumentary,
                     completed=False,
                 )
+                if sectionquizz:
+                    tmpUserDocumentSection.scorerequirement = models.Quiz.objects.get(documentarysector = cursection).scorerequirement
+                    tmpUserDocumentSection.scorerequirement = 0 if not tmpUserDocumentSection.scorerequirement else tmpUserDocumentSection.scorerequirement
                 tmpUserDocumentSection.save()
 
         if sectionquizz:
             nquestions = sectionquizz.getnQuestion()
 
         UserDocumentSection = models.UserDocumentSection.objects.filter(
-            documentarysector=firstsection, userdocumentary=userdocumentary
+            documentarysector=cursection, userdocumentary=userdocumentary
         ).first()
 
         if UserDocumentSection:
@@ -206,23 +210,34 @@ def coursedetail(request, courseid, sectionid=None):
                 runningquizz = (
                     None if userquizzes.last().isover() else userquizzes.last()
                 )
+            questions = models.Question.objects.filter(quizz= models.Quiz.objects.filter(documentarysector = cursection).first())
             userquizzesa = None
             userquizzesa = [quiz for quiz in userquizzes if quiz.isover()]
     return render(
         request,
         "coursedetail.html",
         {
-            "documentary": documentary,
-            "sections": sections,
-            "cursection": firstsection,
-            "sectorcontent": result,
-            "userdocumentary": userdocumentary,
-            "sectionquizz": sectionquizz,
-            "nquestions": nquestions,
-            "userDocumentsection": UserDocumentSection,
-            "userquizz": userquizzesa,
-            "runningquizz": runningquizz,
-        },
+            "coursedata":{
+                "documentary": documentary,
+                "sections": sections,
+                "usertodocumentary":{
+                    "userdocumentary": userdocumentary,
+                    "sectionquizz": sectionquizz,
+                    "nquestions": nquestions,
+                    "userDocumentsection": UserDocumentSection},
+                },
+            "currentsectiondata":{
+                "cursection": cursection,
+                "sectorcontent": sectionmetacontent,
+                "sectionquizz":{
+                    "listuserquiz": userquizzesa,
+                    "runningquizz": runningquizz},
+                "quizinfo": {
+                    "questions": questions, 
+                    "questionscore": 1/len(questions)*10 if questions else None,
+                    "quizminute": userquizzesa[0].testminiutes if userquizzesa else None}
+                },
+        }
     )
 
 
@@ -280,6 +295,7 @@ def assigningtest(request, courseid, sectionid, testid, userdocumentsectionid):
 
     tmp_QU = models.tmp_UQ_QuestionUser.objects.filter(UQ_Question=tmp)
     tmp.related_questions.set(models.tmp_UQ_QuestionUser.objects.filter(UQ_Question=tmp))
+
     return render(
         request,
         "test.html",
@@ -294,37 +310,103 @@ def assigningtest(request, courseid, sectionid, testid, userdocumentsectionid):
             },
         },
     )
-
 @login_required
-def ajax_next_pre_question(request, idtmp, flag=True):
+def ajax_is_join_test(request,idtmp):
     tmpUQQA = get_object_or_404(models.tmp_UserQuizQuestionAnswer, pk=idtmp)
-    
-    if flag:
-        tmpUQQA.questionindex += 1
-    else:
-        tmpUQQA.questionindex = max(0, tmpUQQA.questionindex - 1)
-    
-    tmpUQQA.save(force_update=True)
-    
-    # Fetch a single instance of tmp_UQ_QuestionUser using get_object_or_404
-    tmp = get_object_or_404(models.tmp_UQ_QuestionUser, UQ_Question=tmpUQQA, questionindex=tmpUQQA.questionindex)
-    
+    tmp = models.tmp_UQ_QuestionUser.objects.filter(UQ_Question=tmpUQQA, questionindex=tmpUQQA.questionindex).first()
+    # get all the answer options from the question index
     answers = models.Answer.objects.filter(question=tmp.question)
-    
     # Serialize tmp and answers to JSON
     tmp_json = serialize('json', [tmp])
     answers_json = serialize('json', answers)
-
-    data = {"tmp": tmp_json, "answeroptions": answers_json}
+    question_json = serialize('json',[tmp.question])
+    picked_answer=None
+    if tmp.answer:
+        picked_answer = serialize('json',[tmp.answer])
+    data = {"tmp": tmp_json, "answeroptions": answers_json,"question": question_json,"picked_answer":picked_answer}
     return HttpResponse(json.dumps(data), content_type="application/json")
-
 @login_required
-def ajax_submittest(request, courseid, userquizid):
-    userquiz = get_object_or_404(models.UserQuiz, pk=userquizid)
-    userquiz.update_state()
-    userquiz.save(force_update=True)
-    return redirect(coursedetail, courseid, userquizid)
-
+def ajax_next_pre_question(request, idtmp, direction):
+    tmpUQQA = get_object_or_404(models.tmp_UserQuizQuestionAnswer, pk=idtmp)
+    if direction==1 or tmpUQQA.questionindex==-1:
+        if tmpUQQA.questionindex < tmpUQQA.related_questions.count()-1:
+            tmpUQQA.questionindex += 1
+    else: 
+        if tmpUQQA.questionindex>0:
+            tmpUQQA.questionindex -= 1
+    
+    tmpUQQA.save(force_update=True)
+    
+    # Fetch a single answer for that question at index of tmp test
+    tmp = models.tmp_UQ_QuestionUser.objects.filter(UQ_Question=tmpUQQA, questionindex=tmpUQQA.questionindex).first()
+    # get all the answer options from the question index
+    answers = models.Answer.objects.filter(question=tmp.question)
+    # Serialize tmp and answers to JSON
+    tmp_json = serialize('json', [tmp])
+    answers_json = serialize('json', answers)
+    question_json = serialize('json',[tmp.question])
+    picked_answer=None
+    if tmp.answer:
+        picked_answer = serialize('json',[tmp.answer])
+    data = {"tmp": tmp_json, "answeroptions": answers_json,"question": question_json,"picked_answer":picked_answer}
+    return HttpResponse(json.dumps(data), content_type="application/json")
 @login_required
-def ajax_answerpick(request, idtmp, answerorder):
-    pass
+def ajax_question_nav_at_index(request, idtmp,questionindex):
+    questionindex-=1
+    tmpUQQA = get_object_or_404(models.tmp_UserQuizQuestionAnswer, pk=idtmp)
+    tmpUQQA.questionindex = questionindex
+    tmpUQQA.save(force_update=True)
+    
+    # Fetch a single answer for that question at index of tmp test
+    tmp = models.tmp_UQ_QuestionUser.objects.filter(UQ_Question=tmpUQQA, questionindex= tmpUQQA.questionindex).first()
+    # get all the answer options from the question index
+    answers = models.Answer.objects.filter(question=tmp.question)
+    # Serialize tmp and answers to JSON
+    tmp_json = serialize('json', [tmp])
+    answers_json = serialize('json', answers)
+    question_json = serialize('json',[tmp.question])
+    picked_answer=None
+    if tmp.answer:
+        picked_answer = serialize('json',[tmp.answer])
+    data = {"tmp": tmp_json, "answeroptions": answers_json,"question": question_json,"picked_answer":picked_answer}
+    return HttpResponse(json.dumps(data), content_type="application/json")
+@login_required
+def ajax_answerpick(request, idtmpUQ, idquestion, answerorder):
+    try:
+        answerorder+=1
+        tmp_UQ = models.tmp_UQ_QuestionUser.objects.filter(question__pk = idquestion, UQ_Question__pk = idtmpUQ).first()
+        tmp_UQ.answer = models.Answer.objects.filter(question__id = idquestion,answerorder = answerorder).first()
+        tmp_UQ.save(force_update=True)
+        return HttpResponse(tmp_UQ.answer.answerorder)
+
+    except Exception as e:
+        # Handling the specific exception
+        return HttpResponse("Error!")
+@login_required
+def finalizetest(request, idtmpUQA):
+    try:
+        #update the user score to the quiz, get the highest score
+        tmpUserQuestion = models.tmp_UQ_QuestionUser.objects.filter(UQ_Question__pk = idtmpUQA, answer__is_correct = True)
+        totalscore = tmpUserQuestion.count()
+        tmpUserQuestionAnswer = models.tmp_UserQuizQuestionAnswer.objects.get(pk = idtmpUQA)
+        userquiz = models.UserQuiz.objects.get(pk = tmpUserQuestionAnswer.userquiz.id)
+        userquiz.quizscore = totalscore
+        userquiz.quizisover=True
+        userquiz.save(force_update=True)
+        userdocumentsection = models.UserDocumentSection.objects.filter(pk = userquiz.userdocumentsection.pk).first()
+        userdocumentsection.quiz_score=models.UserQuiz.objects.filter(userdocumentsection = userdocumentsection).order_by("quizscore").last().quizscore
+        userdocumentsection.completed = True if userdocumentsection.quiz_score >=userdocumentsection.scorerequirement else False
+        userdocumentsection.datemodified = datetime.now().replace(tzinfo=None)
+        userdocumentsection.save(force_update=True)
+        userdocumentsection.userdocumentary.update_per_state()
+        tmpUserQuestionAnswer.delete()
+        return HttpResponse(
+            "success"
+        )
+
+
+    except Exception as e:
+        print(e)
+        return HttpResponse(
+            "error"
+            )

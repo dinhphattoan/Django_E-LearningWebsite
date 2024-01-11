@@ -1,123 +1,329 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
-{% load django_bootstrap5 %}
-
-{% block title %}
-  <title>Sign Up</title>
-{% endblock %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
-{% endblock %}
+{% endblock head %}
 {% block styles %}
-  <style>
-    body {
-      background-color: #c8f2f8;
-      justify-content: center;
-      align-items: center;
-    }
-    .form {
-      border-radius: 10px;
-      background-color: #fff;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      animation: fade-in 1s ease-in-out;
-    }
-    @keyframes fade-in {
-      from {
-        transform: translateY(-2rem);
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    /* Apply for itemcard */
-    .itemcard {
-      width: 25rem;
-      height: 20rem;
-      margin: 10px;
-      border: 1px solid black;
-      transition: all 0.2s ease-in-out;
-    }
-    
-    .itemcard:hover { 
-      transform: rotateY(-20deg);
-      box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.25);
-      z-index: 1;
-      
-    }
-    .imgcard{
-      width:24.9rem;
-      height:13rem;
-    }
-  </style>
-{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock styles %}
 {% block content %}
-<div class="container mt-5 " style="min-width: 20rem;">
-  <div class="container-fluid d-flex justify-content-center form" style="max-width: fit-content;">
-      <div class="text-center mt-3">
-          <h1>Ready to Start Learning?</h1>
-          <p>Explore our courses, take quizzes, and embark on your
-              learning journey today!</p>
-          <a class="btn btn-lg btn-primary p-3 mb-4"
-              href="{% url 'Courses' %}">Browse Courses</a>
+  <section class="header18 cid-u0Wv5so9Ch mbr-fullscreen" data-bg-video="{% static '/assets/pythonprogramerintroduction.mp4' %}" id="hero-15-u0Wv5so9Ch">
+    <div class="mbr-overlay" style="opacity: 0.3; background-color: rgb(0, 0, 0);"></div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="content-wrap col-12 col-md-8">
+          <h1
+            class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1 animate__animated animate__delay-1s animate__fadeInUp">
+            <strong>Làm chủ Python</strong>
+          </h1>
+          <p class="mbr-fonts-style mbr-text mbr-white mb-4 display-7 animate__animated animate__delay-1s animate__fadeInUp">Rèn luyện kĩ năng và trở trành lập trình viên chuyên nghiệp!</p>
+          <div class="mbr-section-btn">
+            <a class="btn btn-white-outline display-7 animate__animated animate__delay-1s animate__fadeInUp" href="{% url 'Courses'%}">Tham gia ngay</a>
+          </div>
+        </div>
       </div>
-  </div>
-  
-</div>
-<div class="container-fluid mt-5">
-  <div class="row align-items-center">
-      <div class="col-sm-12 col-md-6 p-3 ">
-          <div class="bg-light form p-3" style="height: fit-content;max-width: fit-content;min-height: 20rem;">
-            {% if userdocumentary is None %}
-            <h3>Đăng nhập để xem những khóa học gần đây</h3>
-            {% else %}
-            <div>
-              <h3>Khóa học đăng ký gần đây</h3>
-              <div class="mb-3 itemcard">
-                <a id="itemcard" href="{% url 'coursedetail' courseid=userdocumentary.documentary.id %}" class="" style="width: 25.5rem;height:20.5rem; text-decoration:none; display: block;">
-                  <img class="imgcard" src="{{ userdocumentary.documentary.thumbnail.url}}" alt="No Image">
-                  <div class="overflow-hidden me-2">
-                    <h4 class="card-header my-auto bg-bl ms-2 mt-1 overflow-hidden" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{userdocumentary.documentary.title}}</h4>
-                  </div>
-                  <br>
-                  <div>
-                    <div class="d-flex flex-row-reverse p-2 me-2" style="float:right">
-                      {% if userdocumentary.documentary.skill_level == "beginner" %}
-                      <span class="ms-1 badge bg-success"><p class="my-auto fs-6">Beginner</p></span>{% endif %}
-                      {% if userdocumentary.documentary.skill_level == "intermediate" %}
-                      <span class="ms-1 badge bg-primary"><p class="my-auto fs-6">Intermediate</p></span>{% endif %}
-                      {% if userdocumentary.documentary.skill_level == "advanced" %}
-                      <span class="ms-1 badge bg-info"><p class="my-auto fs-6">Advanced</p></span>{% endif %}
-                      <b>Skill level:</b>
-                    </div>
-                  </div>
-                  <div class="d-flex p-2 bg-light" style="float:left;">
-                    <b class="text-secondary">Hoàn thành:</b>
-                    <span class="ms-1 badge bg-primary">
-                      {% if userdocumentary.perfinished is not 100 %}
-                      <p class="my-auto fs-7 text-white">{{userdocumentary.perfinished}}</p>
-                      {% else %}
-                      <p class="my-auto fs-7 text-primary">&#10004;</p>
-                      {% endif %}
-                    </span>
-                  </div>
-                </a>
-              </div>
+    </div>
+  </section>
+  <section data-bs-version="5.1" class="article12 cid-u0Wv5sol5C" id="about-me-12-u0Wv5sol5C">    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12 col-lg-10">
+                <h3 class="mbr-section-title mbr-fonts-style mb-4 mt-0 display-2">
+                <strong>Về PyWizard</strong>
+                </h3>
+                
+                <p class="mbr-text mbr-fonts-style display-7">Chào mừng bạn đến với trang web của mình, nơi giấc mơ viết mã trở thành hiện thực và các pháp sư được sinh ra &#128540;! Tại PyWizard, mình tin vào sự kỳ diệu của Python và những khả năng vô tận mà nó mang lại.</p>
+                <p class="mbr-text mbr-fonts-style display-7">Các khóa học của tụi mình được thiết kế để đưa bạn vào một cuộc hành trình đầy mê hoặc xuyên qua thế giới Python, từ những điều cơ bản đến các phép thuật và bùa chú nâng cao.</p>
+                <p class="mbr-text mbr-fonts-style display-7">Hãy tham gia cộng đồng người dùng đầy tham vọng của tụi mình và bắt tay vào hành trình khám phá những bí mật của Python.</p>
             </div>
-            {% endif %}
+        </div>
+    </div>
+</section>
+<section class="list05 cid-u0Wv5sphYE" id="faq-3-u0Wv5sphYE">
+  <div class="container">
+      <div class="col-12 mb-5 content-head">
+          <h3 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2">
+              <strong>Các câu hỏi thường gặp cho người bắt đầu</strong>
+          </h3>   
+      </div>
+      <div class="row justify-content-center">
+          <div class="col-12 col-lg-8">
+              <div class="item features-without-image col-12 active">
+                  <div class="item-wrapper">
+                      <h5 class="mbr-card-title mbr-fonts-style mt-0 mb-3 display-5">
+                          <strong>Python có phù hợp khi bắt đầu từ đầu không?</strong></h5>
+                      <p class="mbr-text mbr-fonts-style mt-0 mb-3 display-7">
+                        Chắc chắn rồi! Python là ngôn ngữ hoàn hảo cho người mới bắt đầu do cú pháp đơn giản và dễ đọc. Nó giống như làm phép bằng tiếng Anh đơn giản!
+                      </p>
+                  </div>
+              </div>
+              <div class="item features-without-image col-12">
+                  <div class="item-wrapper">
+                      <h5 class="mbr-card-title mbr-fonts-style mt-0 mb-3 display-5">
+                          <strong>Python có thể mang lại lợi ích gì cho sự nghiệp của tôi??</strong></h5>
+                      <p class="mbr-text mbr-fonts-style mt-0 mb-3 display-7">
+                        Python là một công cụ mạnh mẽ trong lĩnh vực công nghệ và việc làm chủ nó có thể mở ra cánh cửa dẫn đến một thế giới cơ hội. Từ khoa học dữ liệu đến phát triển web, Python là chìa khóa để khai phá tiềm năng mã hóa của bạn.
+                      </p>
+                  </div>
+              </div>
+              <div class="item features-without-image col-12">
+                  <div class="item-wrapper">
+                      <h5 class="mbr-card-title mbr-fonts-style mt-0 mb-3 display-5">
+                          <strong>Các câu đố có thử thách không??</strong></h5>
+                      <p class="mbr-text mbr-fonts-style mt-0 mb-3 display-7">
+                        Các câu đố của tôi được thiết kế để kiểm tra kiến thức và trí thông minh của bạn, nhưng đừng lo! Với sự hướng dẫn của những người hướng dẫn phép thuật của chúng tôi, bạn sẽ được chuẩn bị tốt để chinh phục bất kỳ câu đố nào xảy ra theo cách của bạn.
+                      </p>
+                  </div>
+                <div class="item features-without-image col-12">
+                  <div class="item-wrapper">
+                      <h5 class="mbr-card-title mbr-fonts-style mt-0 mb-3 display-5">
+                          <strong>Có cộng đồng nào dành cho người dùng PyWizard không??</strong></h5>
+                      <p class="mbr-text mbr-fonts-style mt-0 mb-3 display-7">
+                        Tham gia cộng đồng của tụi tôi, chia sẻ kinh nghiệm của bạn và cộng tác trong các dự án độc đáo. Cộng đồng PyWizard là nơi hỗ trợ, truyền cảm hứng và học hỏi không ngừng.
+                      </p>
+                  </div>
+              </div>
           </div>
       </div>
-      <div class="col-sm-12 col-md-6 p-3 ">
-          <div class="bg-light form" style="height: 20rem;max-width: fit-content;"></div>
+  </div>
+</section>
+<section class="features10 cid-u0Wv5spnes" id="metrics-2-u0Wv5spnes">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="item features-without-image col-12 col-md-6 col-lg-4">
+        <div class="item-wrapper">
+          <div class="card-box align-left">
+            <h5 class="card-title mbr-fonts-style display-1">
+              <strong>1000+</strong>
+            </h5>
+            <p class="card-text mbr-fonts-style mb-3 display-7">
+              Người dùng tiềm năng
+            </p>            
+          </div>
+        </div>
+      </div>
+      <div class="item features-without-image col-12 col-md-6 col-lg-4">
+        <div class="item-wrapper">
+          <div class="card-box align-left">
+            <h5 class="card-title mbr-fonts-style display-1">
+              <strong>50+</strong>
+            </h5>
+            <p class="card-text mbr-fonts-style mb-3 display-7">
+              Khóa học
+            </p>            
+          </div>
+        </div>
+      </div>
+      <div class="item features-without-image col-12 col-md-6 col-lg-4">
+        <div class="item-wrapper">
+          <div class="card-box align-left">
+            <h5 class="card-title mbr-fonts-style display-1">
+              <strong>24/7</strong>
+            </h5>
+            <p class="card-text mbr-fonts-style mb-3 display-7">
+              Cộng đồng &amp; Hỗ trợ
+            </p>            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <section class="article2 cid-u0Wv5spYIr" id="generic-text-2-u0Wv5spYIr">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-12 col-lg-6 image-wrapper">
+          <img class="w-100" src="{% static 'assets/images/photo-1514070706115-47c142769603.jpeg' %}">
+        </div>
+        <div class="col-12 col-md-12 col-lg">
+          <div class="text-wrapper align-left">
+            <h1 class="mbr-section-title mbr-fonts-style mb-4 display-2">
+              <strong>Bộc lộ kĩ năng của bạn</strong>
+            </h1>
+            <p class="mbr-text align-left mbr-fonts-style mb-3 display-7">Tại PyWizard, tôi tin vào sức mạnh của Python trong việc khai thác tiềm năng mã hóa và giải phóng khả năng sáng tạo của bạn. Hãy cùng tôi tham gia cuộc hành trình kỳ diệu xuyên qua thế giới Python và khám phá những điều kỳ diệu của mã hóa.</p>
+            <p class="mbr-text align-left mbr-fonts-style mb-3 display-7">Các khóa học của tôi được thiết kế sao cho hấp dẫn, mang tính tương tác và trên hết là hấp dẫn. Học theo tốc độ của riêng bạn và xem kỹ năng mã hóa của bạn để trở thành lập trình viên tiềm năng.</p>
+            <p class="mbr-text align-left mbr-fonts-style mb-3 display-7">Hãy tham gia cộng đồng đào tạo phù thủy của tôi và đắm mình trong thế giới ma thuật Python. Cùng nhau, chúng ta sẽ chinh phục các thử thách viết mã và tạo ra những điều kỳ diệu với Python..</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="features037 cid-u0Wv5spAHL" id="features-57-u0Wv5spAHL">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-lg-4">
+				<div class="col-12 col-md-12">
+					<h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2">
+            <strong>Tính năng khóa học</strong>
+					</h5>
+					<h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
+            Tham gia và học hỏi với tính năng độc đáo.
+          </h6>
+          <div class="mbr-section-btn item-footer mt-3 main-button">
+						<a href="" class="btn item-btn btn-primary display-7">
+            Đăng ký khóa học</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-8 side-features">
+				<div class="item features-without-image col-12 col-md-12 col-lg-6 item-mb active">
+					<div class="item-wrapper">
+						<div class="item-content align-left">
+							<h5 class="card-title mbr-fonts-style display-5">
+                <strong>Interactive</strong>
+							</h5>
+							<p class="card-text mbr-fonts-style display-7">
+                Tham gia vào các bài học và bài tập tương tác giúp việc học Python trở thành một trải nghiệm hay ho.
+              </p>
+						</div>
+					</div>
+				</div>
+				<div class="item features-without-image col-12 col-md-12 col-lg-6 item-mb">
+					<div class="item-wrapper">
+						<div class="item-content align-left">
+							<h5 class="card-title mbr-fonts-style display-5">
+                <strong>Linh hoạt</strong>
+							</h5>
+							<p class="card-text mbr-fonts-style display-7">
+                Học theo tốc độ của riêng bạn và truy cập tài liệu khóa học bất cứ khi nào và bất cứ nơi nào bạn muốn.
+              </p>
+						</div>
+					</div>
+				</div>
+        <div class="item features-without-image col-12 col-md-12 col-lg-6 item-mb">
+					<div class="item-wrapper">
+						<div class="item-content align-left">
+							<h5 class="card-title mbr-fonts-style display-5">
+                <strong>Cộng đồng</strong>
+							</h5>
+							<p class="card-text mbr-fonts-style display-7">
+                Tham gia một cộng đồng sôi động, chia sẻ kiến thức của bạn và cộng tác trong các dự án thực tế.
+              </p>
+						</div>
+					</div>
+				</div>
+        <div class="item features-without-image col-12 col-md-12 col-lg-6 item-mb">
+					<div class="item-wrapper">
+						<div class="item-content align-left">
+							<h5 class="card-title mbr-fonts-style display-5">
+                <strong>Dẫn dắt bởi chuyên gia</strong>
+							</h5>
+							<p class="card-text mbr-fonts-style display-7">
+                Học hỏi từ những chuyên gia hướng dẫn, những người sẽ hướng dẫn bạn khám phá mã hóa Python.
+              </p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="gallery4 cid-u0Wv5sq1oF" id="gallery-12-u0Wv5sq1oF">
+  <div class="container-fluid gallery-wrapper">
+    <div class="grid-container">
+      <div class="grid-container-1" style="transform: translate3d(-200px, 0px, 0px);">
+        <div class="grid-item">
+          <img src="{% static 'assets/images/photo-1529101091764-c3526daf38fe.jpeg' %}">
+        </div>
+        <div class="grid-item">
+          <img src="{% static 'assets/images/photo-1529429612779-c8e40ef2f36d.jpeg' %}">
+        </div>
+        <div class="grid-item">
+          <img src="{% static 'assets/images/photo-1521185496955-15097b20c5fe.jpeg' %}">
+        </div>
+        <div class="grid-item">
+          <img src="{% static 'assets/images/photo-1564865878688-9a244444042a.jpeg' %}">
+        </div>
+      </div>
+      <div class="grid-container-2" style="transform: translate3d(-70px, 0px, 0px);' %}">
+        <div class="grid-item">
+          <img src="{% static 'assets/images/photo-1518818608552-195ed130cdf4.jpeg' %}">
+        </div>
+        <div class="grid-item">
+          <img src="{% static 'assets/images/photo-1516101922849-2bf0be616449.jpeg' %}">
+        </div>
+        <div class="grid-item">
+          <img src="{% static 'assets/images/photo-1618335829737-2228915674e0.jpeg' %}">
+        </div>
+        <div class="grid-item">
+          <img src="{% static 'assets/images/photo-1522252234503-e356532cafd5.jpeg' %}">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="header2 cid-u0Wv5sq6AM" id="subscription-form-1-u0Wv5sq6AM">
+  <div class="container">
+    <div class="row content-wrapper justify-content-center">
+      <div class="col-lg-8 mbr-form">
+        <div class="">
+          <h1 class="mbr-section-title mbr-fonts-style mb-5 display-1">
+            <strong>Tham gia khóa học Python ngay!</strong>
+          </h1>
+        </div>
+        <div class="text-wrapper align-left" data-form-type="formoid">
+          <div class="dragArea row">
+              <div class="col-auto mbr-section-btn"><button type="submit" class="w-100 btn btn-primary display-7">Đăng ký</button></div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="people06 cid-u0Wv5sqGk5" id="testimonials-7-u0Wv5sqGk5">   
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="card col-12 col-md-12 col-lg-8">
+                <div class="card-wrapper">
+                    <div class="card-box align-center">
+                        <p class="card-text mbr-fonts-style display-5">
+                          PyWizard đã thay đổi hành trình viết mã của tôi và biến việc học Python trở thành một trải nghiệm đầy mê hoặc!
+                        </p>
+                        <div class="img-wrapper mt-3 justify-content-center">
+                            <img src="{% static 'assets/7c3.jpg' %}" data-slide-to="0" data-bs-slide-to="0">
+                        </div>
+                        <p class="card-title mbr-fonts-style mt-3 display-7">
+                            <small>Được đánh giá bởi</small>
+                            <strong>Gandalf râu xám </strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="contacts03 cid-u0Wv5ssnq1" id="contacts-11-u0Wv5ssnq1">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+        <div class="col-12 col-md-12">
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2">
+            <strong>Liên hệ với chúng tôi</strong>
+          </h5>
+          <p class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
+            Số điện thoại: <a href="">0862-294-920</a>
+            <br>Email: thefox16122002@gmail.com
+            <br>Address:  Viet Nam
+        </div>
+      </div>
+      <div class="col-lg-8 side-features">
+        <div class="google-map">
+          <iframe frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key&#x3D;AIzaSyCt1265A4qvZy9HKUeA8J15AOC4SrCyZe4&amp;q&#x3D;%20Viet%20Nam" allowfullscreen=""></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class=" footer4 cid-u0Wv5stFPl" style="" once="footers" id="footer-4-u0Wv5stFPl">
+  <div class="container">
+      <div class="media-container-row align-center mbr-white">
+          <div class="col-12">
+              <p class="mbr-text mb-0 mbr-fonts-style display-7">
+                  © 2024 PyWizard. All Rights Reserved.
+              </p>
+          </div>
       </div>
   </div>
-</div>
-{% endblock %}
-{% block javascripts %}
-  <script src="{% static 'js/bootstrap.js' %}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script>
-  </script>
-{% endblock %}
-
+</section>
+{% endblock content %}
