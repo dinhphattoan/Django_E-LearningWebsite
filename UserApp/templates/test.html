@@ -69,7 +69,7 @@
                   </div>
                 </div>
                 <!--Modal submit result-->
-                <div class="modal fade modal-sm text-white" id="submitresultmodel" tabindex="-1"
+                <div class="modal fade modal-fullscreen-sm-down text-white" id="submitresultmodel" tabindex="-1"
                   aria-labelledby="submitresultmodel" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered modal-lg"
                     style="width: 100rem;">
@@ -81,13 +81,12 @@
                       </div>
 
                       <!-- Modal Body (Your Layout/Component Goes Here) -->
-                      <div class="modal-body px-5" style>
+                      <div class="modal-body px-5 text-dark" style>
                         <!-- Your layout or component content goes here -->
                         <span id="spanresult"></span>
                       </div>
                       <div class="modal-footer">
-                        <a type="button"
-                          class="btn btn-success" data-bs-dismiss="modal" href="{% url "coursedetail" courseid=courseid sectionid=sectionid %}">Trở về khóa học</button>
+                        <a type="button" class="btn btn-success" href="{% url "coursedetail" courseid=courseid sectionid=sectionid %}">Trở về khóa học</button>
                       </a>
                     </div>
                   </div>

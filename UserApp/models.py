@@ -57,14 +57,19 @@ class UserDocumentary(models.Model):
     def __str__(self):
         return self.user.username + " - " + self.documentary.title + " | process: " + str(self.perfinished)
     def update_per_state(self):
-        completed_sections_count = UserDocumentSection.objects.filter(userdocumentary=self, completed=True).count()
-        total_sections_count = DocumentarySector.objects.filter(documentary=self.documentary).count()
-
+        list_sections = DocumentarySector.objects.filter(documentary = self.documentary).all()
+        list_sectionquizes =list(list_sections)
+        list_userds = list()
+        for section in list_sectionquizes:
+            if Quiz.objects.filter(documentarysector__pk = section.pk).first():
+                list_userds.append(UserDocumentSection.objects.get(documentarysector=section,userdocumentary = self))
+        list_finishedsection = [x for x in list_userds if x.completed]
+        list_unfinishedsection = [x for x in list_userds if not x.completed]
         # Avoid division by zero by checking if total_sections_count is not zero
-        if total_sections_count != 0:
-            self.perfinished = completed_sections_count / total_sections_count
-            self.perfinished*=100
+        if len(list_unfinishedsection) != 0:
+            self.perfinished = (len(list_finishedsection) / (len(list_unfinishedsection)+len(list_finishedsection))) * 100
         else:
+            # Handle the case where list_unfinishedsection is empty to avoid division by zero
             self.perfinished = 0
 
         self.save(force_update=True)
@@ -80,14 +85,12 @@ class Quiz(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     documentarysector = models.ForeignKey(DocumentarySector, on_delete=models.CASCADE, null=True, blank=True)
-    questions = models.ManyToManyField('Question',blank=True)
     nrepeat = models.IntegerField(default = -1)
     scorerequirement = models.IntegerField(default=0)
-    def getnQuestion(self):
-        return self.questions.count()
     def __str__(self):
-        return f"Kiểm tra: {self.documentarysector.title} | Số câu: {self.questions.count()} | thông tin: {self.description} | số lần thi lại: {'Vô hạn' if self.nrepeat == -1 else str(self.nrepeat)}"
-
+        return f"Kiểm tra: {self.documentarysector.title}| thông tin: {self.description} | số lần thi lại: {'Vô hạn' if self.nrepeat == -1 else str(self.nrepeat)}"
+    def getnQuestion(self):
+        return Question.objects.filter(quizz = self).count()
 
 class Question(models.Model):
     QUESTION_TYPE = [
@@ -151,7 +154,7 @@ class UserQuiz(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
     def __str__(self):
-        return f"{self.testdate} | {self.userdocumentsection.userdocumentary.user.username} | {self.quiz.title} | ({self.update_state()}/{self.getnumberquestion()})"
+        return f"{self.testdate} | {self.userdocumentsection.userdocumentary.user.username} | {self.quiz.title} | ({self.update_state()})"
 
     def update_state(self):
         self.quizscore = QuestionAnswer.objects.filter(userquiz=self).filter(answer__is_correct=1).count()
@@ -167,9 +170,6 @@ class UserQuiz(models.Model):
         return True
     def getsecondrange(self):
         return (timedelta(minutes=15)-(self.joindate.replace(tzinfo=None) - self.testdate.replace(tzinfo=None))).total_seconds()
-
-    def getnumberquestion(self):
-        return self.quiz.questions.count()
     
 class QuestionAnswer(models.Model):
     userquiz = models.ForeignKey(UserQuiz,on_delete=models.CASCADE)
@@ -212,4 +212,26 @@ def question_post_save(sender, instance, **kwargs):
     listuserdocumentationsection =  UserDocumentSection.objects.filter(documentarysector=documentary_sector).all()
     for userdocumentationsection in listuserdocumentationsection:
         userdocumentationsection.update_score_requirement()
-            
+@receiver(post_save,sender=Quiz)
+def quiz_post_save(sender, instance, created, **kwargs):
+    """
+    This function will be called after an new instance of Quiz is saved.
+    All the user process with document will be update with including unfinished quiz
+    """
+    if created:
+        documentarysector = instance.documentarysector
+        documentary = documentarysector.documentary
+        list_userdocument = UserDocumentary.objects.filter(documentary= documentary).all()
+        for ud in list_userdocument:
+            ud.update_per_state()
+@receiver(post_delete,sender=Quiz)
+def quiz_post_save(sender, instance, **kwargs):
+    """
+    This function will be called after an new instance of Quiz is saved.
+    All the user process with document will be update with including unfinished quiz
+    """
+    documentarysector = instance.documentarysector
+    documentary = documentarysector.documentary
+    list_userdocument = UserDocumentary.objects.filter(documentary= documentary).all()
+    for ud in list_userdocument:
+        ud.update_per_state()

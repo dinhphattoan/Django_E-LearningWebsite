@@ -75,7 +75,7 @@
         
       </div>
       <button title="toogle" class="btn btn-primary btn-sm position-fixed" style="width: fit-content;z-index: 10;" data-bs-toggle="offcanvas" data-bs-target="#my-drawer"><span class="navbar-toggler-icon"></span> Các chương</button>
-      <div class="col-md-2 d-flex flex-column" style="width:max-content;">
+      <div class="col-md-2 d-flex flex-column mx-auto" style="width:max-content;">
         {%if currentsectiondata.cursection is not None %}
           <h3 class="text-dark fw-bold text-center">{{ currentsectiondata.cursection.title}}</h3>
             <div class="d-flex">
@@ -104,7 +104,7 @@
           
           {% endif %}
         {% else %}
-        <table class="table table-responsive-md table-hover border align-self-center" style="width: fit-content;">
+        <table class="table table-responsive-md table-hover border align-self-center " style="width: fit-content;">
           <thead>
             <tr>
             </tr>
@@ -165,8 +165,12 @@
                             {% csrf_token %}
                             <div class="bg-light border p-2 mt-3">
                                 <p class="disabled fw-lighter">Chưa sở hữu khóa học, đăng ký ngay?</p>
-                                <button id="signbtn" type="submit" class="btn btn-info"> Đăng ký</button>
-                                <span id="success" class="text-success mb-3"></span>
+                                <div class="text-black">
+                                  <button id="signbtn" type="submit" class="btn btn-info"> Đăng ký</button>
+                                  <label id="success" class=""></label>
+                                </div>
+                                
+                                
                             </div>
                         </form>
                           
@@ -209,7 +213,6 @@
   </div>
   </div>
 </section>
-
 <section>
   {% if coursedata.usertodocumentary.sectionquizz %}
             <div class="text-center mt-3 bg-light border border-1 p-3">
@@ -331,31 +334,31 @@
   {% else %}
   {% endif %}
 </section>
-
 {% endblock %}
 {% block javascripts %}
 <script src="{% static 'js/bootstrap.js' %}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script>
-    var idtmp = {{coursedata}};
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    var idtmp = {{coursedata.documentary.id}};
     console.log(idtmp);
     $(document).ready(function() {
       $('#signincourse').submit(function(e) {
           e.preventDefault();
+          
           $('#success').html('');
 
           $.ajax({
               type: 'POST',
-              url: "{% url 'ajax_signincourse' coursedata.documentary.id %}",
+              url: "{% url 'ajax_signincourse' documentaryid=coursedata.documentary.id %}",
               data: {
                   csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
               },
               success: function(data) {
                   if (data == "") {
-                      $('#success').addClass('text-danger').html("Lỗi đăng ký khóa học");
+                      $('#success').html("Lỗi đăng ký khóa học");
                   }
                   else {
-                      $('#success').addClass('text-success').html("Đăng ký khóa học thành công, tải lại trang...");
+                      $('#success').html("Đăng ký khóa học thành công, tải lại trang...");
                       setTimeout(function() {
                           location.reload();
                       }, 1500);
@@ -368,4 +371,5 @@
       });
   });
   </script>
-{% endblock %}
+
+{% endblock javascripts %}

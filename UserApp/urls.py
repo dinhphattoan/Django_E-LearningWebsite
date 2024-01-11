@@ -46,4 +46,8 @@ urlpatterns = [
     path('ajax-answer-pick/<int:idtmpUQ>/<int:idquestion>/<int:answerorder>/', views.ajax_answerpick, name='ajax_answerpick'),
     path("Course/documentaries/Test/<int:idtmp>",views.ajax_is_join_test,name="ajax_is_join_test"),
     path("Course/documentaries/Test/submit/<int:idtmpUQA>",views.finalizetest,name="finalizetest"),
+    path("ajax_signincourse/<int:usersectionid>",
+        views.ajax_finishsection,
+        name="ajax_finishsection",
+    )
 ]

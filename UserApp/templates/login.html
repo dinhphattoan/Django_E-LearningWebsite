@@ -86,7 +86,7 @@
               $('#success').html(data)
             }
             else{
-              if (window.history.length > 1)
+              if (window.history.length > 1 && !document.referrer.includes("signup"))
               {
                 window.history.back();
               }

@@ -140,6 +140,9 @@ def ajax_signincourse(request, documentaryid):
                 perfinished=0,
             )
             userdocumentary.save()
+            documentsection = models.DocumentarySector.objects.filter(documentary = userdocumentary.documentary).all()
+            for ds in documentsection:
+                models.UserDocumentSection(userdocumentary =userdocumentary, documentarysector = ds).save(force_insert=True)
             data = "Đăng ký khóa học thành công, tải lại trang..."
 
     return HttpResponse(data)
@@ -410,3 +413,11 @@ def finalizetest(request, idtmpUQA):
         return HttpResponse(
             "error"
             )
+        
+        
+def ajax_finishsection(request, usersectionid):
+    if request.user.is_authenticated:
+        userdocumentsection = models.UserDocumentSection.objects.get(pk = usersectionid)
+        userdocumentsection.completed= True
+        userdocumentsection.save(force_update=True)
+        return HttpResponse("success")
