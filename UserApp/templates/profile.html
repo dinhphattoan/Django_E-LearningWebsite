@@ -10,7 +10,23 @@
 {% block styles %}
 
   <style>
-
+    .carditem{
+      transition: all 0.2s ease-in-out;
+    }
+    .carditem :hover { /* Apply hover styles to all direct children */
+      transform: rotateY(-20deg);
+      box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.25);
+      z-index: 1;
+      
+    }
+    .itemcard {
+      width: 25rem;
+      height: 20rem;
+      margin: 10px;
+      transition: all 0.2s ease-in-out;
+      border-radius: 35px;
+      border:1px solid black;
+    }
     body {
       background-color: #c8f2f8;
       justify-content: center;
@@ -36,170 +52,170 @@
     .form-control{
       margin-bottom: 20px;
     }
+    p{
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
   </style>
 {% endblock %}
 {% block content %}
-<section style="height: 10rem;">
+<section style="height: 3rem;">
 </section>
 
-
 <section class="mx-auto p-5 " style="">
-      <div class="row">
-        <div class="col-lg-4">
-          <div class="card mb-4">
-            <div class="card-body text-center">
-              <img src="{{userinfo.portrait.url}}" alt="avatar"
-                class="rounded-circle img-fluid mx-auto" style="width: 150px;">
-              <h5 class="my-3">{{userinfo.username}}</h5>
-              <p class="text-muted mb-1">Full Stack Developer</p>
-              <p class="text-muted mb-4">{{userinfo.address}}</p>
-              <div class="d-flex justify-content-center mb-2">
-                <button type="button" class="btn btn-primary">Follow</button>
-                <button type="button" class="btn btn-outline-primary ms-1">Message</button>
-              </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+              <img id="portrait" src="{% if userinfo.portrait %}{{ userinfo.portrait.url }}{% else %}{% endif %}" alt="                        trống"
+              class="rounded-circle img-fluid mx-auto border" style="width: 150px;min-height: 150px;">
+            
+            <h5 class="my-3">{{userinfo.username}}</h5>
+            <div class="d-flex flex-column">
+              <p id="major" class="text-muted mb-1">{{userinfo.major}}</p>
+              <p id="bio" class="text-muted mb-4">{{userinfo.bio}}</p>
             </div>
-          </div>
-          <div class="card mb-4 mb-lg-0" data-bs-theme="dark">
-            <div class="card-body p-0">
-              <ul class="list-group list-group-flush rounded-3">
-                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                  <i class="fas fa-globe fa-lg text-warning"></i>
-                  <a href="{{userinfo.href_blog}}" class="mb-0">{{userinfo.href_blog}}</a>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                  <i class="fab fa-github fa-lg" style="color: #333333;"></i>
-                  <a href="{{userinfo.href_github}}" class="mb-0">{{userinfo.href_github}}</a>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                  <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
-                  <a href="{{userinfo.href_twitter}}" class="mb-0">{{userinfo.href_twitter}}</a>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                  <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
-                  <a href="{{userinfo.href_facebook}}" class="mb-0">{{userinfo.href_facebook}}</a>
-                </li>
-              </ul>
+            
+            <div class="d-flex justify-content-center mb-2">
             </div>
           </div>
         </div>
-        <div class="col-lg-8">
-          <div class="card mb-4">
-            <div class="card-body">
-              <div class="row">
-                <div class="col-sm-3">
-                  <p class="mb-0">Full Name</p>
-                </div>
-                <div class="col-sm-9">
-                  <p class="text-muted mb-0">{{userinfo.user.first_name}} {{userinfo.user.last_name}}</p>
-                </div>
-              </div>
-              <hr>
-              <div class="row">
-                <div class="col-sm-3">
-                  <p class="mb-0">Email</p>
-                </div>
-                <div class="col-sm-9">
-                  <p class="text-muted mb-0">{{userinfo.user.email}}</p>
-                </div>
-              </div>
-              <hr>
-              <div class="row">
-                <div class="col-sm-3">
-                  <p class="mb-0">Phone</p>
-                </div>
-                <div class="col-sm-9">
-                  <p class="text-muted mb-0">{{userinfo.phone}}</p>
-                </div>
-              </div>
-              <hr>
-              <div class="row">
-                <div class="col-sm-3">
-                  <p class="mb-0">Address</p>
-                </div>
-                <div class="col-sm-9">
-                  <p class="text-muted mb-0">{{userinfo.address}}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="card mb-4 mb-md-0">
-                <div class="card-body">
-                  <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
-                  </p>
-                  <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                  <div class="progress rounded mb-2" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="card mb-4 mb-md-0">
-                <div class="card-body">
-                  <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
-                  </p>
-                  <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                  <div class="progress rounded mb-2" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66"
-                      aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div class="card mb-4 mb-lg-0 border " data-bs-theme="dark">
+          <div class="card-body p-0 mt-3">
+            <ul class="list-group list-group-flush rounded-3">
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fas fa-globe fa-lg text-warning"></i>
+                <a id="blog"  href="{{userinfo.href_blog}}" class="mb-0">{{userinfo.href_blog}}</a>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-github fa-lg" style="color: #333333;"></i>
+                <a id="github"  href="{{userinfo.href_github}}" class="mb-0">{{userinfo.href_github}}</a>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
+                <a id="twitter" href="{{userinfo.href_twitter}}" class="mb-0">{{userinfo.href_twitter}}</a>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
+                <a id="facebook" href="{{userinfo.href_facebook}}" class="mb-0">{{userinfo.href_facebook}}</a>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Full Name</p>
+              </div>
+              <div class="col-sm-9">
+                <p id="firstname_lastname" class="text-muted mb-0">{{userinfo.user.first_name}} {{userinfo.user.last_name}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Email</p>
+              </div>
+              <div class="col-sm-9">
+                <p id="email" class="text-muted mb-0">{{userinfo.user.email}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Phone</p>
+              </div>
+              <div class="col-sm-9">
+                <p id="phone" class="text-muted mb-0">{{userinfo.phone}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Address</p>
+              </div>
+              <div class="col-sm-9">
+                <p id="address" class="text-muted mb-0">{{userinfo.address}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row position-relative border pt-2">
+          <div>
+            <h5 class="text-center">Hoạt động gần đây</h5>
+          </div>
+          <div class="col-md-7 position-relative m-2 mx-auto p-2" style="max-width: 450px; box-shadow: inset 0px 0px 12px;">
+            <!-- First child div -->
+            {% if userinfo.usercourse_podium %}
+            <div class="mx-auto" style="box-shadow: 0px 0px 6px; border-radius: 20px; margin: 10px; padding: 10px;">
+              <div style="height: 100%;width: 100%;"><img src="{{userinfo.usercourse_podium.documentary.thumbnail.url}}" style="border-top-left-radius: 15px;border-top-right-radius: 15px;border-bottom-right-radius: 15px;border-bottom-left-radius: 15px;height: inherit;width: inherit;" /></div>
+              <div style="width: 100%;height: 100%;">
+                  <h1 class="h4" style="padding-left: 10px;width: 100%;">Python nâng cao</h1>
+                  <div class="justify-content-between d-flex" style="height: fit-content;"><label class="form-label my-auto" style="padding: 3px;margin-left: 10px;">Hoàn thành: 70</label><label class="form-label my-auto" style="background: var(--bs-success);border-top-left-radius: 10px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-bottom-left-radius: 10px;padding: 3px;font-weight: bold;margin-right: 10px;">Nâng cao</label></div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        
+          <div class="col-md-7 position-relative m-2 mx-auto overflow-auto" style="max-width: 500px; max-height: 320px; box-shadow: inset 0px 0px 5px;">
+            <!-- Second child div -->
+            {% for userquiz in userquiz  %}
+              <div class="mx-auto mt-2 d-flex flex-row justify-content-center" style="border-radius: 15px; box-shadow: 0px 0px 4px; margin-bottom: 10px; height: fit-content; min-width: 250px; width: 99%;">
+                <div class="my-auto" style="width: 100%;height: fit-content;margin: 10px;">
+                  <img class="my-auto" style="border-top-left-radius: 5px;border-top-right-radius: 5px;border-bottom-right-radius: 5px;border-bottom-left-radius: 5px;width: inherit;" 
+                  src="{{userquiz.userdocumentsection.userdocumentary.documentary.thumbnail.url}}" width="231" height="106" /></div>
+                  <div class="d-flex flex-column" style="width: inherit;border-top-left-radius: 5px;border-top-right-radius: 5px;border-bottom-right-radius: 5px;border-bottom-left-radius: 5px;box-shadow: 0px 0px 2px;margin-top: 10px;margin-bottom: 8px;margin-right: 10px;padding-left: 10px;padding-right: 10px;">
+                      <h1 class="h6 overflow-hidden" style="width: 10rem;margin-top: 5px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{userquiz.userdocumentsection.userdocumentary.documentary.title}}</h1>
+                      <small class="h7 border">
+                        {{userquiz.userdocumentsection.documentarysector.title}} ({{userquiz.quizscore}})
+                      </small>
+                      <small class="border" style="margin-bottom: 2px;box-shadow: 0px 0px;">
+                        {{userquiz.testdate}}</small>
+                      <small class="text-center border my-auto" style="background: var(--bs-blue);border-top-left-radius: 8px;border-top-right-radius: 8px;border-bottom-right-radius: 8px;border-bottom-left-radius: 8px;padding: 3px;font-weight: bold;font-size: 12px;width: fit-content;color: var(--bs-gray-100);">
+                        Nâng cao
+                      </small>
+                  </div>
+              </div>
+            {% endfor %}
+            
+            
+          </div>
+        
+          
+        </div>
+
+        
+      </div>
     </div>
+    <div  class="shadow shadow-sm border">
+    </div>
+    <div >
+      {% if request.user.username == userinfo.user.username %}
+      <button id="btnedit" type="button" onclick="entereditmode()" class="btn btn-success btn-sm" style="float:left;">Chỉnh sửa hồ sơ</button>
+      {% endif %}
+      {% if request.user.is_superuser %}
+      <a type="button" href="/admin/" class="btn btn-warning btn-sm" style="float:left;">Quản lý dữ liệu</a>
+      {% endif %}
+    </div>
+    <div id="divedit">
+      {% csrf_token %}
+      <input type="button" onclick="saveinfo()" class="btn btn-success btn-sm" style="float:right;" value="Lưu chỉnh sửa">
+      <button id="btncancel" onclick="existeditmode()" type="button" class="btn btn-secondary btn-sm" style="float:right;">Hủy</button>
+    </div>
+  </form>
+      
+    
   </section>
     <br><br><br>
 {% endblock %}
 {% block javascripts %}
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script>
-    
+    console.log({{userinfo.usercourse_podium.perfinished}});
     $(document).on('submit', '#login', function (e) {
       e.preventDefault();
       $('#success').html('')
@@ -231,12 +247,160 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script>
+    //tmp data
+    var htmlinputreplace = ""
+    var htmlContent, attributes ,classes ;
+    var list_prevElement = [];
+    var list_changeids = [ 'portrait', 'major','bio', 'blog','github','twitter','facebook','firstname_lastname','email','phone','address'];
     $(document).on('ready',function(){
-      if({{userinfo}}==null)
+      if({{userinfo.user}}==null)
       {
         alert("Người dùng đăng nhập lần đầu, vui lòng cập nhật thông tin trên");
       }
     })
+    //Turn any assigned element into input text
+    function convertInput() {
+      for (var i = 0; i < list_changeids.length; i++) {
+          console.log(list_changeids[i]);
+          list_prevElement.push($(`#${list_changeids[i]}`)[0].outerHTML);
+          if(list_changeids[i]==="portrait")
+          {
+            var inputElement1 = $('<input>', {
+              type: 'file',
+              id: list_changeids[i],
+              class: "form-control-sm ", // Assuming list_changeids is an array of elements
+              for: "portrait"
+            });
+            $(`#${list_changeids[i]}`).replaceWith( inputElement1);
+          }
+          else if(list_changeids[i]==="firstname_lastname")
+          {
+            var inputElement1 = $('<input>', {
+                type: 'text',
+                id: "firstname",
+                class: "form-control-sm ", // Assuming list_changeids is an array of elements
+                placeholder: 'Enter text...',
+                value: "{{userinfo.user.first_name}}",
+                for: "firstname"
+            });
+            var inputElement2 = $('<input>', {
+              type: 'text',
+              id: "lastname",
+              class: "form-control-sm ", // Assuming list_changeids is an array of elements
+              placeholder: 'Enter text...',
+              value: "{{userinfo.user.last_name}}",
+              for: "lastname"
+            });
+            var div = $('<div>',{
+              class:"d-flex flex-row",
+              id:"divname"
+            });
+            div.append(inputElement1.prop('outerHTML'));
+            div.append(inputElement2.prop('outerHTML'));
+            // Replace the original element with the new input and label
+            $(`#${list_changeids[i]}`).replaceWith( div);
+          }
+          else if(list_changeids[i]==="bio")
+          {
+            var inputElement = $('<input>', {
+                type: 'text',
+                for: list_changeids[i],
+                id: list_changeids[i],
+                class: "form-control-sm ", // Assuming list_changeids is an array of elements
+                placeholder: 'Enter text...',
+                value: $(`#${list_changeids[i]}`)[0].innerText,
+            });
+            console.log(inputElement[0].outerHTML);
+            $(`#${list_changeids[i]}`).replaceWith( inputElement);
+          }
+          else
+          {
+            var inputElement = $('<input>', {
+                type: 'text',
+                for: list_changeids[i],
+                id: list_changeids[i],
+                class: "form-control-sm ", // Assuming list_changeids is an array of elements
+                placeholder: 'Enter text...',
+                value: $(`#${list_changeids[i]}`)[0].innerText,
+            });
+            console.log(inputElement[0].outerHTML);
+            // Replace the original element with the new input and label
+            $(`#${list_changeids[i]}`).replaceWith( inputElement);
+          }
+          
+  
+         
+      }
+  }
+  function convertElement(){
+      for (var i = 0; i < list_changeids.length; i++) {
+        console.log(list_changeids[i]);
+        if(list_changeids[i]==="firstname_lastname")
+        {
+          $(`#divname`).replaceWith(list_prevElement[i]);
+        }
+        else
+        // Replace the original element with the new input and label
+        $(`#${list_changeids[i]}`).replaceWith( list_prevElement[i]);
+    }
+    list_prevElement=[];
+  }
+  function entereditmode()
+  {
+    $('#btnedit').attr('hidden',true);
+    convertInput();
+    $('#divedit').attr('hidden',false);
+  }
+  function existeditmode()
+  {
+    $('#btnedit').attr('hidden',false);
+    convertElement();
+    $('#divedit').attr('hidden',true);
+  }
+  $('#divedit').attr('hidden',true);
+  const userprofileid = {{userinfo.pk}};
+  var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+  function saveinfo()
+  {
+    var formData = new FormData();
+    formData.append('major', $('#major').val());
+    formData.append('blog', $('#blog').val());
+    formData.append('bio', $('#bio').val());
+    formData.append('github', $('#github').val());
+    formData.append('twitter', $('#twitter').val());
+    formData.append('facebook', $('#facebook').val());
+    formData.append('firstname', $('#firstname').val());
+    formData.append('lastname', $('#lastname').val());
+    formData.append('email', $('#email').val());
+    formData.append('phone', $('#phone').val());
+    formData.append('address', $('#address').val());
+    
+    // Assuming 'portrait' is the input type file
+    formData.append('portrait', $('#portrait')[0].files[0]);
+    
+    $.ajax({
+        url: `/ajax_edit_profile/${userprofileid}/`,
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        headers: {'X-CSRFToken': csrftoken},
+        success: function(response) {
+            location.reload();
+            // Handle the success response
+        },
+        error: function(error) {
+            console.error(error);
+            // Handle the error response
+        }
+    });
+  }
+  
+  var courseid = '{{ userinfo.usercourse_podium.documentary.id }}';
+  $(`#${courseid}`).on('click',function(event){
+    // Replace 'https://www.example.com' with the desired URL
+    window.location.href = `/Course/${courseid}`;
+  })
   </script>
 {% endblock javascripts %}
 

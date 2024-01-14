@@ -1,4 +1,5 @@
 import json
+from typing import List
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -31,6 +32,8 @@ def signup_view(request):
         form = myUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
+            user = models.User.objects.get(pk = models.User.objects.latest('date_joined').pk)
+            models.UserInfo(user = user).save(force_insert=True)
             messages.success(request, 'Account created successfully. You can now log in.')
             return redirect('login')
     else:
@@ -55,6 +58,16 @@ def password_reset_view(request):
     return render(request, 'password_reset.html', {'form': form})  # Create a password_reset.html template for the password reset form
 def userprofile(request,iduser):
     userinfo = models.UserInfo.objects.filter(user__pk = iduser).first()
+    list_userdocumentsection = models.UserDocumentSection.objects.filter(userdocumentary__user__id = iduser).all()
+    list_userquiz = list()
+    index=0
+    for userdocumentsection in list_userdocumentsection:
+        if len(list_userquiz) == 2:break
+        userquiz = models.UserQuiz.objects.filter(userdocumentsection = userdocumentsection)
+        for uq in userquiz:  
+            if uq.isover:
+                list_userquiz.append(uq)
+                if len(list_userquiz) == 2:break
     if userinfo:
-        return render(request, "profile.html",{"userinfo": userinfo})
+        return render(request, "profile.html",{"userinfo": userinfo,"userquiz":list_userquiz})
     return HttpResponse(request,"Người dùng không tồn tại")

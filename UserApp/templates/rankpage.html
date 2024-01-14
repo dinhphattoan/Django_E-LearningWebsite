@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <title>Sign Up</title>
+{% endblock %}
+{% block head %}
+
+{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+
+    body {
+      background-color: #c8f2f8;
+      justify-content: center;
+      align-items: center;
+    }
+    .form {
+      width: 350px;
+      padding: 30px;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      animation: fade-in 1s ease-in-out;
+    }
+    @keyframes fade-in {
+      from {
+        transform: translateY(-2rem);
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    .form-control{
+      margin-bottom: 20px;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+<section style="height: 5rem;">
+</section>
+<section class="py-4 py-xl-5" style="max-height:1000px;">
+  <div class="container h-100">
+      <div class="row h-100">
+          <div class="col-md-10 col-xl-8 text-center d-flex d-sm-flex d-md-flex justify-content-center align-items-center mx-auto justify-content-md-start align-items-md-center justify-content-xl-center">
+              <div>
+                  <h2 class="text-uppercase fw-bold mb-3" style="font-size: 24.44px;">xếp hạng người dùng</h2>
+                  <p class="mb-4">Xếp hạng những người dùng đã hoàn thành khóa học nhiều nhất xuống dần, các bài kiểm tra của các học phần. Chăm chỉ tập luyện để có thể đứng vị trí cao hơn</p>
+                  <div><button class="btn btn-primary d-flex float-end" type="button" style="background: var(--bs-light);color: var(--bs-black);width: 53px;height: 41px;border-color: var(--bs-gray-500);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" style="font-size: 26px;">
+                              <path d="M5.09668 6.99707H7.17358L4.17358 3.99707L1.17358 6.99707H3.09668V17.0031H1.15881L4.15881 20.0031L7.15881 17.0031H5.09668V6.99707Z" fill="currentColor"></path>
+                              <path d="M22.8412 7H8.84119V5H22.8412V7Z" fill="currentColor"></path>
+                              <path d="M22.8412 11H8.84119V9H22.8412V11Z" fill="currentColor"></path>
+                              <path d="M8.84119 15H22.8412V13H8.84119V15Z" fill="currentColor"></path>
+                              <path d="M22.8412 19H8.84119V17H22.8412V19Z" fill="currentColor"></path>
+                          </svg></button></div>
+                  <ul class="list-group mx-auto" style="padding: 10px;min-width: 370px;overflow: auto;max-width: 1000px;max-height: 50rem;margin-bottom: 10px;border: 1px solid var(--bs-gray-500);box-shadow: inset 0px 0px 5px;border-top-left-radius: 0px;border-top-right-radius: 0px;border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;">
+                    {% for userrank in list_userrank %}
+                    <li class="list-group-item" style="border-style: none;">
+                      <div class="d-flex mx-auto my-auto" style="border-top-left-radius: 10px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;box-shadow: 0px 0px 4px;border-bottom-left-radius: 10px;padding: 5px;min-width: 315px;margin-bottom: 10px;">
+                        <img src="{% if userrank.user_info.portrait %}{{userrank.user_info.portrait.url}}{% else %}{% endif %}" style="width: 100%;max-width: 103px;max-height: 110px;border-top-left-radius: 5px;border-top-right-radius: 5px;border-bottom-right-radius: 5px;border-bottom-left-radius: 5px;" loading="lazy" />
+                          <div class="d-flex flex-column my-auto" style="padding: 5px;margin: 5px;border-top-left-radius: 5px;border-top-right-radius: 5px;border-bottom-right-radius: 5px;box-shadow: 0px 0px 2px;border-bottom-left-radius: 5px;width: 100%;height: fit-content;">
+                              <div class="row" style="width: inherit;">
+                                  <h6 class="my-auto" style="overflow: hidden;width: fit-content;">{{userrank.user.first_name}} {{userrank.user.last_name}}</h6><small class="text-muted small text-center my-auto" style="width: fit-content;">({{userrank.user.username}})</small>
+                              </div>
+                              <div class="d-flex flex-column justify-content-between" style="width: inherit;"><small class="text-start text-muted">Khóa học hoàn thành: {{userrank.finished_course_count}}</small><small class="text-start text-muted">Bài thi hoàn thành: {{userrank.finished_quiz_count}}</small></div>
+                          </div><small class="fixed-top position-relative" style="height: fit-content;padding: 5px;">{{ forloop.counter }}</small>
+                      </div>
+                    </li>
+                    {% endfor %}  
+                   
+                  </ul>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+{% endblock %}
+{% block javascripts %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script>
+    
+    $(document).on('submit', '#login', function (e) {
+      e.preventDefault();
+      $('#success').html('')
+      $.ajax({
+          type: 'POST',
+          url: "{% url 'login' %}",
+          data: {
+            username: $('#username').val(),
+            password: $('#password').val(),
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+          },
+          success: function (data) {
+            if(data!="") {
+              $('#success').html(data)
+            }
+            else{
+              if (window.history.length > 1 && !document.referrer.includes("signup"))
+              {
+                window.history.back();
+              }
+              else{
+                window.location.href = "/"; // Redirect to index.html upon success
+              }
+              }
+              
+          }
+      })
+  })
+  </script>
+{% endblock %}
+
+
+

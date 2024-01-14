@@ -9,19 +9,7 @@ from datetime import datetime, timedelta
 # Create your models here.
 
 
-class UserInfo(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    address = models.TextField(blank = True)
-    phone = models.TextField(blank=True)
-    portrait = models.FileField(null=True,upload_to="User/")
-    bio = models.TextField(blank = True)
-    href_facebook = models.TextField(blank = True)
-    href_twitter = models.TextField(blank = True)
-    href_blog = models.TextField(blank = True)
-    href_github = models.TextField(blank = True)
-    def __str__(self):
-       return f"{self.user.pk} User: {self.user.username}| {self.user.first_name} {self.user.last_name}" 
-    
+
 
 class Documentary(models.Model):
     SKILL_LEVEL_CHOICES = [
@@ -70,7 +58,7 @@ class UserDocumentary(models.Model):
             self.perfinished = (len(list_finishedsection) / (len(list_unfinishedsection)+len(list_finishedsection))) * 100
         else:
             # Handle the case where list_unfinishedsection is empty to avoid division by zero
-            self.perfinished = 0
+            self.perfinished = 100
 
         self.save(force_update=True)
 
@@ -124,7 +112,7 @@ class UserDocumentSection(models.Model):
     documentarysector = models.ForeignKey(DocumentarySector, on_delete=models.CASCADE, null=False)
     userdocumentary = models.ForeignKey(UserDocumentary, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
-    quiz_score = models.IntegerField(null=True, blank=True, default=-1)
+    quiz_score = models.IntegerField(null=True, blank=True, default=0)
     #By default the score is 70% of total for requirement
     scorerequirement = models.IntegerField(default=0)
     datemodified = models.DateTimeField(blank=True, default=datetime.now)
@@ -189,6 +177,22 @@ class tmp_UQ_QuestionUser(models.Model):
     answer = models.ForeignKey(Answer,models.CASCADE,null=True)
     questionindex = models.IntegerField(default=-1)
 
+class UserInfo(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    major = models.TextField(blank=True)
+    address = models.TextField(blank = True)
+    phone = models.TextField(blank=True)
+    portrait = models.FileField(null=True,upload_to="User/",blank=True)
+    bio = models.TextField(blank = True)
+    href_facebook = models.TextField(blank = True)
+    href_twitter = models.TextField(blank = True)
+    href_blog = models.TextField(blank = True)
+    href_github = models.TextField(blank = True)
+    usercourse_podium = models.ForeignKey(UserDocumentary,null=True, on_delete=models.CASCADE,blank=True)
+    def __str__(self):
+       return f"{self.user.pk} User: {self.user.username}| {self.user.first_name} {self.user.last_name}" 
+
+
 @receiver(post_save, sender=Question)
 def question_post_save(sender, instance, created, **kwargs):
     """
@@ -224,6 +228,7 @@ def quiz_post_save(sender, instance, created, **kwargs):
         list_userdocument = UserDocumentary.objects.filter(documentary= documentary).all()
         for ud in list_userdocument:
             ud.update_per_state()
+        
 @receiver(post_delete,sender=Quiz)
 def quiz_post_save(sender, instance, **kwargs):
     """
@@ -235,3 +240,27 @@ def quiz_post_save(sender, instance, **kwargs):
     list_userdocument = UserDocumentary.objects.filter(documentary= documentary).all()
     for ud in list_userdocument:
         ud.update_per_state()
+@receiver(post_save,sender=UserDocumentSection)
+def Userdocumentsection_post_save(sender, instance,created, **kwargs):
+    """
+    This function will be called after an new instance of Quiz is saved.
+    All the user process with document will be update with including unfinished quiz
+    """
+    if not created:
+        userinfo = UserInfo.objects.get(user__pk = instance.userdocumentary.user.pk)
+        userinfo.usercourse_podium = instance.userdocumentary
+        userinfo.save(force_update=True)
+        
+@receiver(post_delete, sender=UserInfo)
+def delete_file(sender, instance, **kwargs):
+    # Delete the file when the model instance is deleted
+    instance.portrait.delete(save=False)
+@receiver(post_delete, sender=DocumentarySector)
+def delete_file(sender, instance, **kwargs):
+    # Delete the file when the model instance is deleted
+    instance.videolecture.delete(save=False)
+    instance.contentfile.delete(save=False)
+@receiver(post_delete, sender=Documentary)
+def delete_file(sender, instance, **kwargs):
+    # Delete the file when the model instance is deleted
+    instance.videointro.delete(save=False)

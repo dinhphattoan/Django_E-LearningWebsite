@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+import math
 from django.core.serializers import serialize
 from bs4 import BeautifulSoup, Comment
 from django.http import HttpResponse, JsonResponse
@@ -124,7 +125,7 @@ def ajax_searchcourse(request, strSearch):
 
     return JsonResponse(data)
 
-
+@login_required
 def ajax_signincourse(request, documentaryid):
     documentary = get_object_or_404(Documentary, id=documentaryid)
     data = ""
@@ -142,7 +143,11 @@ def ajax_signincourse(request, documentaryid):
             userdocumentary.save()
             documentsection = models.DocumentarySector.objects.filter(documentary = userdocumentary.documentary).all()
             for ds in documentsection:
-                models.UserDocumentSection(userdocumentary =userdocumentary, documentarysector = ds).save(force_insert=True)
+                quiz = models.Quiz.objects.filter(documentarysector=ds).first()
+                if quiz:
+                    scorerequirement = math.floor((len(models.Question.objects.filter(quizz =quiz).all())/10)*7)
+                else: scorerequirement=0
+                models.UserDocumentSection(userdocumentary =userdocumentary, documentarysector = ds, scorerequirement = scorerequirement).save(force_insert=True)
             data = "Đăng ký khóa học thành công, tải lại trang..."
 
     return HttpResponse(data)
@@ -243,7 +248,32 @@ def coursedetail(request, courseid, sectionid=None):
         }
     )
 
+def rankview(request):
+    class UserRankItem:
+        def __init__(self, user_info, user, n_course, n_quiz):
+            self.user = user
+            self.user_info = user_info
+            self.finished_course_count = n_course
+            self.finished_quiz_count = n_quiz
 
+    list_user = models.User.objects.all()
+    list_userrank_item = []
+
+    for user in list_user:
+        userrank_item = UserRankItem(models.UserInfo.objects.get(user=user), user, len(models.UserDocumentary.objects.filter(user=user, perfinished=100)),
+                                     len(models.UserQuiz.objects.filter(userdocumentsection__userdocumentary__user=user, quizisover=True)
+                    .values("userdocumentsection").distinct()))
+        userrank_item.user_info.portrait
+        list_userrank_item.append(userrank_item)
+
+    # Sort the list based on some criteria, for example, total count of courses and quizzes
+    list_userrank_item = sorted(list_userrank_item,
+                                key=lambda item: item.finished_course_count + item.finished_quiz_count,
+                                reverse=True)
+
+    return render(request, "rankpage.html", {"list_userrank": list_userrank_item})
+def finallize_userdocumentsection(userdocumentsection):
+    userdocumentsection
 @login_required
 def assigningtest(request, courseid, sectionid, testid, userdocumentsectionid):
     userdocumentsection = models.UserDocumentSection.objects.filter(
@@ -313,6 +343,7 @@ def assigningtest(request, courseid, sectionid, testid, userdocumentsectionid):
             },
         },
     )
+    
 @login_required
 def ajax_is_join_test(request,idtmp):
     tmpUQQA = get_object_or_404(models.tmp_UserQuizQuestionAnswer, pk=idtmp)
@@ -403,6 +434,7 @@ def finalizetest(request, idtmpUQA):
         userdocumentsection.save(force_update=True)
         userdocumentsection.userdocumentary.update_per_state()
         tmpUserQuestionAnswer.delete()
+        
         return HttpResponse(
             "success"
         )
@@ -413,11 +445,26 @@ def finalizetest(request, idtmpUQA):
         return HttpResponse(
             "error"
             )
-        
-        
-def ajax_finishsection(request, usersectionid):
-    if request.user.is_authenticated:
-        userdocumentsection = models.UserDocumentSection.objects.get(pk = usersectionid)
-        userdocumentsection.completed= True
-        userdocumentsection.save(force_update=True)
-        return HttpResponse("success")
+@login_required
+def ajax_edit_profile(request,profileid):
+    userprofile = get_object_or_404(models.UserInfo, pk = profileid)
+    userprofile.major = request.POST.get('major')
+    userprofile.bio = request.POST.get('bio')
+    userprofile.href_blog = request.POST.get('blog')
+    userprofile.href_github = request.POST.get('github')
+    userprofile.href_twitter = request.POST.get('twitter')
+    userprofile.href_facebook = request.POST.get('facebook')
+    userprofile.user.first_name = request.POST.get('firstname')
+    userprofile.user.last_name = request.POST.get('lastname')
+    userprofile.user.email = request.POST.get('email')
+    userprofile.user.save(force_update=True)
+    userprofile.phone = request.POST.get('phone')
+    userprofile.address = request.POST.get('address')
+    # Check if 'portrait' file is in the request.FILES
+    if 'portrait' in request.FILES:
+        userprofile.portrait = request.FILES['portrait']
+    userprofile.save(force_update=True)
+
+    return HttpResponse("Data saved!")
+
+

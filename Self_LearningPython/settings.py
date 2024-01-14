@@ -160,3 +160,5 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 # Email subject prefix
 EMAIL_SUBJECT_PREFIX = '[UserApp]'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Adjust the path accordingly

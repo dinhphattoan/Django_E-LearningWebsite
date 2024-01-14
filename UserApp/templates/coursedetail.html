@@ -1,13 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-  <title>Sign Up</title>
-{% endblock %}
-{% block head %}
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  {% if currentsectiondata.cursection %}
+  <title>{{currentsectiondata.cursection.title}}</title>
+  {% else %}
+  <title>{{coursedata.documentary.title}}</title>
+{% endif %}
+
 {% endblock %}
 {% block styles %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}" />
   <style>
+      @media (max-width: 700px) {
+        .my-drawer {
+            display: block !important; /* Override default display property */
+        }
+    }
     body {
       background-color: #c8f2f8;
       justify-content: center;
@@ -41,52 +49,64 @@
       max-width: 700px;
       margin-left: auto;
       margin-right: auto;
+      border-radius: 0%;
+    }
+    .video-js{
+      max-width: 1000px;
+      height:500px;
+    }
+    /* Style for fullscreen mode */
+    .vjs-fullscreen .video-js {
+      width: 100% !important; /* Override width in fullscreen */
+      height: 100% !important; /* Override height in fullscreen */
+      
     }
   </style>
 {% endblock %}
 {% block content %}
+
 <section style="height: 7rem;"></section>
+
+<section>
+  <div class="offcanvas offcanvas-start my-drawer" id="my-drawer" tabindex="-1" data-bs-display="auto">
+    <div class="offcanvas-header">
+      <a class="offcanvas-title h5" href="{% url 'coursedetail' courseid=coursedata.documentary.id %}">{{ coursedata.documentary.title }}</a>
+      <button title="Toggle title" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body" style="">
+      <ul class="nav nav-fill">
+        <div class="d-flex align-items-start">
+          <div class="nav flex-column" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            {% for section in coursedata.sections %}
+            <a class="nav-link active" href="{% url 'coursedetail' courseid=coursedata.documentary.id sectionid=section.id %}" id="myButton{{ coursedata.documentary.id }}">{{ section.title }}</a>
+
+            {% endfor %}
+          </div>
+        </div>
+      </ul>
+    </div>
+  </div>
+</section>
+<button title="toogle" class="btn btn-primary btn-sm position-fixed" style="width: fit-content;z-index: 10;" data-bs-toggle="offcanvas" data-bs-target="#my-drawer"><span class="navbar-toggler-icon" data-bs-display="push"></span> Các chương</button>
 <section>
   <div class="container-fluid mt-3">
     <div class="row">
-      
-      <div class="col-sm-1 d-none d-md-block">
-        
-        
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="my-drawer">
-          <div class="offcanvas-header">
-            <a class="offcanvas-title h5" href="{% url 'coursedetail' courseid=coursedata.documentary.id %}">{{ coursedata.documentary.title }}</a>
-            <button title="Toggle title" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-          </div>
-          <div class="offcanvas-body" style="">
-            <ul class="nav nav-fill">
-              <div class="d-flex align-items-start">
-                <div class="nav flex-column" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                  {% for section in coursedata.sections %}
-                  <a class="nav-link active" href="{% url 'coursedetail' courseid=coursedata.documentary.id sectionid=section.id %}" id="myButton{{ coursedata.documentary.id }}">{{ section.title }}</a>
 
-                  {% endfor %}
-                </div>
-              </div>
-            </ul>
-          </div>
-        </div>
-
-        
-      </div>
-      <button title="toogle" class="btn btn-primary btn-sm position-fixed" style="width: fit-content;z-index: 10;" data-bs-toggle="offcanvas" data-bs-target="#my-drawer"><span class="navbar-toggler-icon"></span> Các chương</button>
       <div class="col-md-2 d-flex flex-column mx-auto" style="width:max-content;">
         {%if currentsectiondata.cursection is not None %}
           <h3 class="text-dark fw-bold text-center">{{ currentsectiondata.cursection.title}}</h3>
-            <div class="d-flex">
+            <div class="d-flex justify-content-center">
               {% if currentsectiondata.cursection.videolecture %}
-              <video controls class="border mx-auto m-3" style="width: fit-content;height: fit-content;max-width: 1000px;">
-               
-               
-                <source src="{{ currentsectiondata.cursection.videolecture.url }}" type="video/mp4">
-                <source src="{{ currentsectiondata.cursection.videolecture.url }}" type="video/ogg">
-                Your browser does not support the video tag.
-              </video>
+              <video id="my-video" class="video-js" controls data-setup="{}">
+                <source src="{{ currentsectiondata.cursection.videolecture.url }}" type="video/mp4" />
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a
+                    web browser that
+                    <a href="https://videojs.com/html5-video-support/" target="_blank"
+                        >supports HTML5 video</a
+                    >
+                </p>
+            </video>
               {% endif %} 
             </div>
            <!-- Render the HTML content using the safe filter -->
@@ -104,98 +124,52 @@
           
           {% endif %}
         {% else %}
-        <table class="table table-responsive-md table-hover border align-self-center " style="width: fit-content;">
-          <thead>
-            <tr>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="">
-              <td><img src="{{ coursedata.documentary.thumbnail.url }}" style="width:32rem;height:20rem;"></td>
-              <td>
-                <table style="width:25rem;">
-                  <tbody>
-                    <tr>
-                      <td>
-                        <div class="mb-2"><h3 >{{coursedata.documentary.title}}</h3></div>
-                        
-                      </td>
-                    <tr>
-                        <td>
-                          <div class="bg-light border p-2 mt-3">
-                            <b>Số bài học: </b><span class="badge bg-secondary"><p class="fs-6">{{coursedata.sections | length}}</p></span>
-                            
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="bg-light border p-2 mt-3 d-flex">
-                            <b>Mức độ: </b>
-                            <div class="ms-3" style="float:right">
-                              {% if coursedata.documentary.skill_level == "beginner" %}
-                              <span class="badge bg-success"><p class="my-auto fs-6">Người mới</p></span>{% endif %}
-                              {% if coursedata.documentary.skill_level == "intermediate" %} 
-                              <span class="badge bg-primary"><p class="my-auto fs-6">Trung cấp</p></span>{% endif %}
-                              {% if coursedata.documentary.skill_level == "advanced" %} 
-                              <span class="badge bg-info"><p class="my-auto fs-6">Nâng cao</p></span>{% endif %}
-                            
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
+        <section>
+          <div class="row mx-auto justify-content-center" style="box-shadow: 0px 0px 2px;padding: 10px;min-width: 314px;height: fit-content;">
+            <div class="d-flex border my-auto" style="height: inherit;min-width: 300px;padding-top: 5px;padding-bottom: 5px;max-width: 600px;">
+              <img style="width: 100%;height: inherit;border-top-left-radius: 15px;border-top-right-radius: 15px;border-bottom-right-radius: 15px;border-bottom-left-radius: 15px;" src="{{ coursedata.documentary.thumbnail.url }}" /></div>
+            <div class="border d-flex flex-column position-relative" style="min-height: 190px;max-width: fit-content;">
+                <h1 class="position-relative h2 text-center" style="font-weight: bold;padding: 5px;margin: 5px;">{{coursedata.documentary.title}}</h1>
+                <div class="my-auto justify-content-between d-flex flex-column" style="padding: 10px;">
+                    <div class="position-relative border" style="font-weight: bold;border-width: 1px;padding: 10px;"><label class="form-label my-auto" style="padding: 3px;">Số bài học:</label><label class="form-label my-auto" style="padding: 3px;border-top-left-radius: 10px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-bottom-left-radius: 10px;background: var(--bs-gray);padding-left: 7px;padding-right: 7px;color: var(--bs-gray-200);">{{coursedata.sections | length}}</label></div>
+                    <div class="position-relative border" style="font-weight: bold;border-width: 1px;padding: 10px;"><label class="form-label my-auto" style="padding: 3px;">Mức độ: </label>
+                      {% if coursedata.documentary.skill_level == "beginner" %} 
+                      <label class="form-label my-auto text-white small bg-success" style="padding: 3px;border-top-left-radius: 10px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-bottom-left-radius: 10px;padding-left: 7px;padding-right: 7px;color: var(--bs-black);">
+                        Cơ bản
+                      {% endif %}
+                      {% if coursedata.documentary.skill_level == "intermediate" %} 
+                      <label class="form-label my-auto text-white small bg-info" style="padding: 3px;border-top-left-radius: 10px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-bottom-left-radius: 10px;padding-left: 7px;padding-right: 7px;color: var(--bs-black);">
+                        Trung cấp
+                      {% endif %}
+                      {% if coursedata.documentary.skill_level == "advanced" %} 
+                      <label class="form-label my-auto text-white small bg-warning" style="padding: 3px;border-top-left-radius: 10px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-bottom-left-radius: 10px;padding-left: 7px;padding-right: 7px;color: var(--bs-black);">
+                        Nâng cao
+                      {% endif %}
+                      </label>
+                    </div>
                     {% if coursedata.usertodocumentary.userdocumentary is not None %}
-                    <tr>
-                      <tr>
-                        <td>
-                          <div class="bg-light border p-2 mt-3">
-                            <b>Mức độ hoàn thành: {{coursedata.usertodocumentary.userdocumentary.perfinished}}%</b>
-                            <div class="progress">
-                              <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{coursedata.usertodocumentary.userdocumentary.perfinished}}%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </div>
-                          
-                        </td>
-                      </tr>
+                    <div class="position-relative border" style="font-weight: bold;border-width: 1px;padding: 10px;padding-top: 5px;padding-bottom: 5px;"><label class="form-label my-auto" style="padding: 3px;">Mức độ hoàn thành: {{coursedata.usertodocumentary.userdocumentary.perfinished}}%</label>
+                      <div class="progress progress-bar-animated">
+                          <div class="progress-bar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: {{coursedata.usertodocumentary.userdocumentary.perfinished}}%;;"></div>
+                      </div>
+                    </div>
                     {% else %}
-                    <tr>
-                      <tr>
-                        <td >
-                          <form id="signincourse" method="POST">
-                            {% csrf_token %}
-                            <div class="bg-light border p-2 mt-3">
-                                <p class="disabled fw-lighter">Chưa sở hữu khóa học, đăng ký ngay?</p>
-                                <div class="text-black">
-                                  <button id="signbtn" type="submit" class="btn btn-info"> Đăng ký</button>
-                                  <label id="success" class=""></label>
-                                </div>
-                                
-                                
-                            </div>
-                        </form>
-                          
-                          
-                        </td>
-                      </tr>
+                    <form id="signincourse" method="POST">
+                    <div class="border d-flex flex-column" style="font-weight: bold;border-width: 1px;padding: 10px;padding-top: 5px;padding-bottom: 5px;"><small class="form-text">Chưa sở hữu khóa học, đăng ký ngay.</small>
                       
+                        {% csrf_token %}
+                      <button id="signbtn" type="submit" class="btn btn-primary" style="width: fit-content;">
+                        Đăng ký
+                      </button>
+                      <small id="success" class="form-text text-black"></small>
+                      </form>
+                    </div>
                     {% endif %}
-                  </tbody>
-                </table>
-                </td>
-                {% if documentary.videointro %}
-                    <td >
-                      <video controls class="border mx-auto m-3" style="width: inherit;height: fit-content;max-width: 500px;">
-           
-           
-                        <source src="{{ coursedata.documentary.videointro.url }}" type="video/mp4">
-                        <source src="{{ currentsectiondata.cursection.videointro.url }}" type="video/ogg">
-                        Your browser does not support the video tag.
-                      </video>
-                    </td>
-                    {% endif %}
-            </tr>
-          </tbody>
-        </table>
+                    
+                </div>
+            </div>
+          </div>
+        </section>
         {% if coursedata.documentary.summary is not None %}
           <div class="container bg-light border p-3">
             {{coursedata.documentary.summary}}
@@ -284,7 +258,7 @@
                                         {% for uq in currentsectiondata.sectionquizz.listuserquiz %}
                                         <tr>
                                           <td>
-                                            Ngày:{{uq.startdate|date:"Y-m-d H:i:s"}}
+                                            Ngày:{{uq.testdate|date:"Y-m-d H:i:s"}}
                                           </td>
                                           <td>
                                             Điểm: {{uq.quizscore}}/{{currentsectiondata.quizinfo.questions|length}}
@@ -336,7 +310,6 @@
 </section>
 {% endblock %}
 {% block javascripts %}
-<script src="{% static 'js/bootstrap.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
     var idtmp = {{coursedata.documentary.id}};
