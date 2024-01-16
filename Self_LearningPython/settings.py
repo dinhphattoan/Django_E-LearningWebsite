@@ -141,17 +141,6 @@ MEDIA_URL = '/media/'
 
 # settings.py
 
-# Use the SMTP email backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-# SMTP server settings for Gmail example
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-# Your Gmail account credentials (use an App Password for security)
-EMAIL_HOST_USER = os.environ.get('GMAIL_USER', 'theunclefox@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_APP_PASSWORD', 'Phattoan2k22')
 
 # Default 'from' address for emails sent by Django
 DEFAULT_FROM_EMAIL = 'webmaster@example.com'
