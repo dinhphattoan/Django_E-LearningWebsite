@@ -8,7 +8,7 @@ This project utilizes media resources (documentaries and Python programming less
 
 1. If you prefer to download the media files from an external repository, click the following link (ensure you trust the source):
 
-   [PLACEHOLDER_LINK_TEXT (if applicable)]
+   [Link Download](https://drive.google.com/file/d/1g_OaCiRvcXWXhRyMpiXMHvI6EJLiDpYi/view?usp=sharing)
 
 2. Extract the downloaded file (usually a compressed archive like ZIP or RAR) to create a folder named "media".
 
